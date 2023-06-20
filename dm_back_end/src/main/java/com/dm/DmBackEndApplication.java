@@ -1,13 +1,13 @@
-package com.dm.dm;
+package com.dm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DmApplication {
+public class DmBackEndApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DmApplication.class, args);
+        SpringApplication.run(DmBackEndApplication.class, args);
     }
 
 }
