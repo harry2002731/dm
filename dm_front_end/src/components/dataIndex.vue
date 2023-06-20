@@ -9,7 +9,7 @@ import {
     LegendComponent,
 } from 'echarts/components';
 import VChart, {THEME_KEY} from 'vue-echarts';
-import {ref, defineComponent} from 'vue';
+import {defineComponent} from 'vue';
 
 use([
     CanvasRenderer,
@@ -27,8 +27,16 @@ export default defineComponent({
     provide: {
         [THEME_KEY]: 'dark',
     },
-    setup() {
-        const option = ref({
+    mounted() {
+        this.onInitEchart1();
+    },
+    methods: {
+        onInitEchart1(){
+    {
+        let echarts = require('echarts');
+        let myChart = echarts.init(document.getElementById('echart1'), 'walden');
+
+        let option = {
             title: {
                 text: 'Traffic Sources',
                 left: 'center',
@@ -63,12 +71,13 @@ export default defineComponent({
                         },
                     },
                 },
-            ],
-        });
 
-        return {option};
-    },
-});
+            ]
+        };
+        myChart.setOption(option);
+
+    }
+}}});
 </script>
 
 <template>
@@ -99,9 +108,35 @@ export default defineComponent({
         <el-container>
             <el-header style="text-align: right; font-size: 12px">
                     <i class="el-icon-s-platform" style="margin-right: 15px"></i>
-
                 <span>管理员</span>
             </el-header>
+            <el-main>
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>数据展示</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-row :gutter="20" class="row-pane">
+                    <el-col :span="12" class="col-2">
+                        <el-row>
+                            <el-col :span="2" style="width: 12px; height: 12px; background: #1890FF;
+                        border-radius: 50%; margin: 20px 0 0 35px;"></el-col>
+                            <el-col :span="22" style="width: 150px; height: 15px; font-size: 16px;
+                        font-family: Alibaba PuHuiTi; font-weight: 400; color: #333333;
+                        margin: 15px 0 0 10px;">项目类型汇总</el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col style="width: 90%; height: 43px; font-size: 16px; font-family: Alibaba PuHuiTi;
+                        font-weight: 400; color: #333333; margin: 15px 0 0 40px;">
+                                “十三五”期间重点项目完成总投资82.86亿元，其中中央财政2146.56亿元，地方财政0亿元，社会资本0亿元，其他0亿元
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <div id="echart1"></div>
+                        </el-row>
+                    </el-col>
+                </el-row>
+
+            </el-main>
         </el-container>
     </el-container>
     </div>
@@ -117,7 +152,7 @@ export default defineComponent({
 .el-aside {
     color: #333;
 }
-.chart {
-    height: 100vh;
+#echart1 {
+    height: 30vh;
 }
 </style>
