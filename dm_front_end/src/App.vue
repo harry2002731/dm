@@ -1,22 +1,11 @@
 <template>
   <div id="app">
-    <dataIndex></dataIndex>
+    <router-view />
   </div>
 </template>
 
 <script>
-import DataIndex from "@/components/dataIndex.vue";
-
 export default {
-  name: 'App',
-  components: {
-      DataIndex,
-  }
+  name: 'App'
 }
 </script>
-
-<style>
-#app {
-    height: 100%;
-}
-</style>
