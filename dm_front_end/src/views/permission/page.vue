@@ -2,21 +2,46 @@
   <div class="app-container">
     <template>
       <div>
-        <el-button type="primary" @click="show()">载入数据</el-button>
-
-        <!--        <h1><div id="show" style="width: 600px;height:0px;" /></h1>-->
-
-        <!--        <h1 class="confidence"><input v-model="confidence" placeholder="0.4"></h1>-->
-        <!--        <h1><button type="button" class="btn btn-default btn-primary" @click="result()">分析数据</button></h1>-->
-        <!--        <h1><div id="result" style="width: 1000px;height:600px;" /></h1>-->
-        <v-chart class="echart1" :option="option" autoresize />
-
-        <el-table class="tableData" :data="tableData" border style="width: 100%" highlight-current-row>
-          <el-table-column type="index" width="50" />
-          <el-table-column prop="name" label="姓名" />
-          <el-table-column prop="age" label="年龄" />
-          <el-table-column prop="email" label="邮箱" />
+        <el-row>
+          <el-col :span="4">
+            <el-button type="primary" @click="show()">载入数据</el-button>
+            <el-button v-if="!isEditing" type="primary" style="margin-bottom: 10px" @click="startEditing">编辑</el-button>
+            <el-button v-else type="success" style="margin-bottom: 10px" @click="finishEditing">完成编辑</el-button>
+          </el-col>
+          <el-col :span="1">
+            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="tableData" style="width: 100%" stripe border :row-class-name="getRowClassName">
+          <el-table-column prop="name" label="姓名">
+            <template slot-scope="scope">
+              <template v-if="isEditing">
+                <el-input v-model="scope.row.name" size="small" />
+              </template>
+              <template v-else>
+                {{ scope.row.name }}
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="age" label="年龄">
+            <template slot-scope="scope">
+              <template v-if="isEditing">
+                <el-input v-model.number="scope.row.age" size="small" />
+              </template>
+              <template v-else>
+                {{ scope.row.age }}
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <template v-if="isEditing">
+                <el-button type="text" size="small" @click="deleteRow(scope.$index)">删除</el-button>
+              </template>
+            </template>
+          </el-table-column>
         </el-table>
+        <v-chart class="echart1" :option="option" autoresize />
         <div class="demo-input-suffix">
           <h1 class="support">
             <el-input
@@ -34,13 +59,11 @@
               clearable
             />
           </h1>
-          <!--          <el-button type="primary" @click="showChart()">载入数据</el-button>-->
           <el-button type="primary" @click="showChart()">热力图</el-button>
-
         </div>
-      </div></template>
+      </div>
+    </template>
     <el-main>
-
       <el-row>
         <div id="echart1" />
       </el-row>
@@ -49,9 +72,6 @@
 </template>
 
 <script>
-// import SwitchRoles from './components/SwitchRoles'
-// import axios from 'axios'
-// import echarts from 'echarts'
 
 export default {
   name: 'PagePermission',
@@ -66,21 +86,38 @@ export default {
       hours: [],
       dataHot: [],
       tableData: [], // 存储表格数据的数组
-      showTable: false // 控制表格显示的标志
-
+      showTable: false, // 控制表格显示的标志
+      showErrorDialog: false,
+      isFocused: false,
+      isEditing: false
     }
   },
-  created() {
-    this.getMessage()
-  },
+
   methods: {
+    checkRowData(row) {
+      return row.name !== '' && row.age !== null
+    },
     show() {
       this.tableData = [
-        { name: 'John Doe', age: 30, email: 'john@example.com' },
-        { name: 'Jane Smith', age: 25, email: 'jane@example.com' },
-        { name: 'Bob Johnson', age: 35, email: 'bob@example.com' }
+        { name: '张三', age: 20, editingFields: [] },
+        { name: '李四', age: 25, editingFields: [] },
+        { name: '王五', age: 30, editingFields: [] }
       ]
-      this.showTable = true // 显示表格
+    },
+    startEditing() {
+      this.isEditing = true
+    },
+    finishEditing() {
+      this.isEditing = false
+    },
+    getRowClassName(row) {
+      return this.isEditing ? 'editable-row' : ''
+    },
+    deleteRow(index) {
+      this.tableData.splice(index, 1)
+    },
+    addRow() {
+      this.tableData.push({ name: '', age: null })
     },
     showChart() {
       const echarts = require('echarts')
@@ -162,11 +199,7 @@ export default {
   margin-top: 10px;
 
 }
-.tableData {
-  margin-top: 10px;
-  left: 0;
-  height: 30vh;
-}
+
 #echart1 {
   margin-top: 10px;
   left: 0;
