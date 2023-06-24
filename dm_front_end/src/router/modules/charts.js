@@ -7,28 +7,17 @@ const chartsRouter = {
   component: Layout,
   redirect: 'noRedirect',
   name: 'Charts',
+  alwaysShow: true, // will always show the root menu
   meta: {
     title: '分类分析',
     icon: 'chart'
   },
   children: [
     {
-      path: 'keyboard',
-      component: () => import('@/views/charts/keyboard'),
-      name: 'KeyboardChart',
-      meta: { title: 'Keyboard Chart', noCache: true }
-    },
-    {
-      path: 'line',
-      component: () => import('@/views/charts/line'),
-      name: 'LineChart',
-      meta: { title: 'Line Chart', noCache: true }
-    },
-    {
-      path: 'mix-chart',
-      component: () => import('@/views/charts/mix-chart'),
-      name: 'MixChart',
-      meta: { title: 'Mix Chart', noCache: true }
+      path: 'decision_tree',
+      component: () => import('@/views/charts/decisionTree.vue'),
+      name: '决策树',
+      meta: { title: '决策树', noCache: true }
     }
   ]
 }
