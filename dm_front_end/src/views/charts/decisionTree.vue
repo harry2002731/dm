@@ -101,7 +101,9 @@ export default {
       showErrorDialog: false,
       isFocused: false,
       isEditing: false,
-      src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+      src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+      input1: '',
+      input2: ''
     }
   },
 

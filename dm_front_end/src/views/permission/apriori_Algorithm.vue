@@ -89,7 +89,9 @@ export default {
       showTable: false, // 控制表格显示的标志
       showErrorDialog: false,
       isFocused: false,
-      isEditing: false
+      isEditing: false,
+      input1: '',
+      input2: ''
     }
   },
 
