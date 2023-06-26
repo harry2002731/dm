@@ -23,8 +23,12 @@ public class IrisService {
 
     public PageInfo<Iris> findAll(int pageNum, int pageSize)
     {
+        System.out.println(pageNum);
+        System.out.println(pageSize);
         PageHelper.startPage(pageNum, pageSize);
         List<Iris> irisList = irisMapper.getAllIris();
-        return new PageInfo<>(irisList);
+        return new PageInfo<Iris>(irisList);
     }
+
+
 }

@@ -13,5 +13,4 @@ import java.util.List;
 public interface IrisMapper {
     @Select("SELECT * FROM iris")
     List<Iris> getAllIris();
-
 }

@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @RestController
 //@RequestMapping("/api/data")
 public class IrisDataController {
+    private static final Logger logger = LoggerFactory.getLogger(IrisDataController.class);
     private final IrisMapper irisMapper;
 
     @Autowired
@@ -32,6 +35,7 @@ public class IrisDataController {
     @GetMapping("/iris_data")
     public PageInfo<Iris> getAllUsers(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
     {
+        logger.info("Received request with pageNum: {}, pageSize: {}", pageNum, pageSize);
         return irisService.findAll(pageNum, pageSize);
     }
 }
