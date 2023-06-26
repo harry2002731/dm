@@ -4,13 +4,25 @@ import com.example.dm_test.entity.Iris;
 import com.example.dm_test.mapper.IrisMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.tree.Tree;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.classifiers.Classifier;
 import weka.classifiers.trees.J48;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeVisualizer;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +35,10 @@ public class ClassificationService {
         List<Iris> irisList = irisMapper.getAllIris();
 
         Instances instances = convertToInstances(irisList);
-        System.out.println(instances);
+//        System.out.println(instances);
 
         // classification begin
-        Classifier classifier = new J48();
+        J48 classifier = new J48();
         try {
             classifier.buildClassifier(instances);
             // 创建一个新的Iris对象，用于分类
@@ -52,6 +64,51 @@ public class ClassificationService {
         {
             e.printStackTrace();
         }
+
+        // visualization
+        try {
+            TreeVisualizer visualizer = new TreeVisualizer(null, classifier.graph(), new PlaceNode2());
+            visualizer.setSize(800, 600);
+
+            // 保存为图片
+            JFrame frame = new JFrame("Decision Tree");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(800, 600);
+            frame.getContentPane().add(visualizer);
+            frame.setVisible(true);
+            visualizer.fitToScreen();
+
+            savePic(frame);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void savePic(JFrame jf)
+    {
+        //得到窗口内容面板
+        Container content=jf.getContentPane();
+        //创建缓冲图片对象
+        BufferedImage img=new BufferedImage(
+                jf.getWidth(),jf.getHeight(),BufferedImage.TYPE_INT_RGB);
+
+        //得到图形对象
+        Graphics2D g2d = img.createGraphics();
+        g2d.setColor(Color.WHITE);
+        //将窗口内容面板输出到图形对象中
+        content.printAll(g2d);
+        //保存为图片
+        File f=new File("/home/benny/Desktop/saveScreen.jpg");
+        try {
+            ImageIO.write(img, "jpg", f);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //释放图形对象
+        g2d.dispose();
+
 
     }
 
