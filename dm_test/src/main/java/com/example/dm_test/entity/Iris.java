@@ -16,6 +16,14 @@ public class Iris {
     private float PetW;
     private String Species;
 
+    public Iris(float SepL, float SepW, float PetL, float PetW)
+    {
+        this.SepL = SepL;
+        this.SepW = SepW;
+        this.PetL = PetL;
+        this.PetW = PetW;
+    }
+
     public Long getId(){
         return id;
     }

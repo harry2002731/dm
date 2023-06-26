@@ -1,7 +1,10 @@
 package com.example.dm_test;
 
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.service.ClassificationService;
+import com.example.dm_test.service.ClusteringService;
 import com.example.dm_test.service.IrisService;
+import org.apache.catalina.Cluster;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +21,9 @@ class DmTestApplicationTests {
 	@Autowired
 	private IrisService irisService;
 
+	@Autowired
+//	private ClusteringService clusteringService;
+	private ClassificationService classificationService;
 	@Test
 	public void testGetAllIris(){
 		List<Iris> irisList = irisService.getAllIris();
@@ -31,5 +37,10 @@ class DmTestApplicationTests {
 		}
 	}
 
+	@Test
+	public void testClustering()
+	{
+		classificationService.performClassification();
+	}
 
 }
