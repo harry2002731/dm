@@ -13,23 +13,13 @@
           </el-col>
         </el-row>
         <el-table :data="tableData" style="width: 100%" stripe border :row-class-name="getRowClassName">
-          <el-table-column prop="name" label="姓名">
+          <el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label">
             <template slot-scope="scope">
               <template v-if="isEditing">
-                <el-input v-model="scope.row.name" size="small" />
+                <el-input v-model.number="scope.row[column.prop]" size="small" />
               </template>
               <template v-else>
-                {{ scope.row.name }}
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column prop="age" label="年龄">
-            <template slot-scope="scope">
-              <template v-if="isEditing">
-                <el-input v-model.number="scope.row.age" size="small" />
-              </template>
-              <template v-else>
-                {{ scope.row.age }}
+                {{ scope.row[column.prop] }}
               </template>
             </template>
           </el-table-column>
@@ -41,6 +31,16 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-row type="flex" justify="center" style="margin-top: 10px">
+          <el-pagination
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            :current-page="pageNum"
+            @prev-click="loadTable"
+            @current-change="loadTable"
+            @next-click="loadTable"
+          />
+        </el-row>
         <v-chart class="echart1" :option="option" autoresize />
         <div class="demo-input-suffix">
           <h1 class="support">
@@ -60,6 +60,7 @@
             />
           </h1>
           <el-button type="primary" @click="showChart()">热力图</el-button>
+          <el-button type="primary" @click="fetchData()">test</el-button>
         </div>
       </div>
     </template>
@@ -73,6 +74,8 @@
 
 <script>
 
+import axios from 'axios'
+
 export default {
   name: 'PagePermission',
   // components: { SwitchRoles },
@@ -82,16 +85,23 @@ export default {
       support: 0.4,
       confidence: 0.4,
       resources: '',
-      days: [],
-      hours: [],
-      dataHot: [],
       tableData: [], // 存储表格数据的数组
       showTable: false, // 控制表格显示的标志
       showErrorDialog: false,
       isFocused: false,
       isEditing: false,
       input1: '',
-      input2: ''
+      input2: '',
+      pageNum: 1,
+      pageSize: 8,
+      columns: [
+        { prop: 'id', label: 'id' },
+        { prop: 'petW', label: 'petW' },
+        { prop: 'sepL', label: 'sepL' },
+        { prop: 'species', label: 'species' },
+        { prop: 'petL', label: 'petL' },
+        { prop: 'sepW', label: 'sepW' }
+      ]
     }
   },
 
@@ -101,10 +111,16 @@ export default {
     },
     show() {
       this.tableData = [
-        { name: '张三', age: 20, editingFields: [] },
-        { name: '李四', age: 25, editingFields: [] },
-        { name: '王五', age: 30, editingFields: [] }
+        // { name: '张三', age: 20, editingFields: [] },
+        { id: 92, petW: 4.6, sepL: 3.0, species: 'versicolor', petL: 1.4, sepW: 6.1 },
+        { id: 92, petW: 4.6, sepL: 3.0, species: 'versicolor', petL: 1.4, sepW: 6.1 }
       ]
+    },
+    loadTable(num) {
+      this.pageNum = num
+      axios.get('/user/page?pageNum=' + this.pageNum + '&pageSize=' + this.pageSize + '&name=' + this.name).then(res => {
+        this.tableData = res.data
+      })
     },
     startEditing() {
       this.isEditing = true
@@ -120,6 +136,15 @@ export default {
     },
     addRow() {
       this.tableData.push({ name: '', age: null })
+    },
+    fetchData() {
+      axios.get('/data') // 发起GET请求，获取数据
+        .then(response => {
+          this.tableData = response.data // 将获取到的数据保存到组件的数据中
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     showChart() {
       const echarts = require('echarts')
