@@ -91,6 +91,7 @@
 import ecStat from 'echarts-stat'
 import PaginationTable from '@/views/components-demo/pagination-table.vue'
 
+import axios from 'axios'
 export default {
   name: 'PagePermission',
   components: { PaginationTable },
@@ -140,15 +141,19 @@ export default {
       ]
     },
     post() {
-      this.$axios.post(this.$httpUrl + '/user/listPageC1', {
-        petW: this.input3,
-        sepL: this.input4,
-        species: this.input5,
-        petL: this.input6
-      }).then(res => res.data).then(res => {
-        console.log(res)
-        this.input7 = res.data
+      axios.post('/post_test', {
+        sepL: parseFloat(this.input3),
+        sepW: parseFloat(this.input4),
+        petL: parseFloat(this.input5),
+        petW: parseFloat(this.input6)
       })
+        .then(res => {
+          console.log(res.data)
+          this.input7 = res.data
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     startEditing() {
       this.isEditing = true
