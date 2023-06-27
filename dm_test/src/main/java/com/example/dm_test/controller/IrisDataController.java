@@ -33,14 +33,14 @@ public class IrisDataController {
     @Autowired
     private ClassificationService classificationService;
 
-    @GetMapping("/iris_data")
+    @GetMapping("/api/user/page")
     public PageInfo<Iris> getAllUsers(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
     {
         logger.info("Received request with pageNum: {}, pageSize: {}", pageNum, pageSize);
         return irisService.findAll(pageNum, pageSize);
     }
 
-    @PostMapping("/post_test")
+    @PostMapping("/api/post_test")
     public String getClassificationResult(@RequestBody Iris dataForClassification)
     {
         logger.info("Received post request");
