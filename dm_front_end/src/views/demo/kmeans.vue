@@ -50,15 +50,6 @@
               clearable
             />
           </h1>
-          <h1 class="support">
-            <el-input
-              v-model="input2"
-              size="medium"
-              placeholder="请输入置信度"
-              clearable
-            />
-          </h1>
-          <el-button type="primary" @click="showChart()">分析数据</el-button>
           <el-button type="primary" @click="showChart()">散点图</el-button>
         </div>
       </div>
@@ -147,9 +138,7 @@ export default {
       const echarts = require('echarts')
       const myChart = echarts.init(document.getElementById('echart1'), 'walden')
       echarts.registerTransform(ecStat.transform.clustering)
-      var CLUSTER_COUNT = this.input1
-      var DIENSIION_CLUSTER_INDEX = 2
-      var COLOR_ALL = [
+      var colors = [
         '#37A2DA',
         '#e06343',
         '#37a354',
@@ -158,62 +147,20 @@ export default {
         '#8378EA',
         '#96BFFF'
       ]
-      var pieces = []
       var data = []
       for (var i = 0; i < this.pieces_raw_data.length; i++) {
-        data.push([this.pieces_raw_data[i].x, this.pieces_raw_data[i].y])
-      }
-      for (i = 0; i < this.input1; i++) {
-        pieces.push({
-          value: i,
-          label: i,
-          color: COLOR_ALL[i]
-        })
+        data.push({ value: [this.pieces_raw_data[i].x, this.pieces_raw_data[i].y], category: this.pieces_raw_data[i].clu_res })
       }
       const option = {
-        dataset: [
-          {
-            source: data
-          },
-          {
-            transform: {
-              type: 'ecStat:clustering',
-              // print: true,
-              config: {
-                clusterCount: CLUSTER_COUNT,
-                outputType: 'single',
-                outputClusterIndexDimension: DIENSIION_CLUSTER_INDEX
-              }
-            }
-          }
-        ],
-        tooltip: {
-          position: 'top'
-        },
-        visualMap: {
-          type: 'piecewise',
-          top: 'middle',
-          min: 0,
-          max: CLUSTER_COUNT,
-          left: 10,
-          splitNumber: CLUSTER_COUNT,
-          dimension: DIENSIION_CLUSTER_INDEX,
-          pieces: pieces
-        },
-        grid: {
-          left: 120
-        },
         xAxis: {},
         yAxis: {},
-        series: {
+        series: data.map(item => ({
           type: 'scatter',
-          encode: { tooltip: [0, 1] },
-          symbolSize: 15,
+          data: [item.value],
           itemStyle: {
-            borderColor: '#555'
-          },
-          datasetIndex: 1
-        }
+            color: colors[item.category] // 根据类别设置颜色
+          }
+        }))
       }
       myChart.setOption(option)
     }
