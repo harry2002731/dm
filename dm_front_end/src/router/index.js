@@ -83,31 +83,6 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/documentation',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/documentation/index'),
-  //       name: 'Documentation',
-  //       meta: { title: 'Documentation', icon: 'documentation', affix: true }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/guide',
-  //   component: Layout,
-  //   redirect: '/guide/index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/guide/index'),
-  //       name: 'Guide',
-  //       meta: { title: 'Guide', icon: 'guide', noCache: true }
-  //     }
-  //   ]
-  // },
   {
     path: '/profile',
     component: Layout,
@@ -143,7 +118,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'apriori',
-        component: () => import('@/views/permission/apriori_Algorithm.vue'),
+        component: () => import('@/views/demo/apriori_Algorithm.vue'),
         name: 'PagePermission',
         meta: {
           title: 'Apriori',

@@ -15,7 +15,7 @@ const chartsRouter = {
   children: [
     {
       path: 'decision_tree',
-      component: () => import('@/views/charts/decisionTree.vue'),
+      component: () => import('@/views/demo/decisionTree.vue'),
       name: '决策树',
       meta: { title: '决策树', noCache: true }
     }

@@ -15,7 +15,7 @@ const nestedRouter = {
   children: [
     {
       path: '/linear_regression',
-      component: () => import('@/views/nested/linear-regression'),
+      component: () => import('@/views/demo/linear-regression'),
       name: '线性回归',
       meta: { title: '线性回归' }
     }

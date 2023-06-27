@@ -2,45 +2,7 @@
   <div class="app-container">
     <template>
       <div>
-        <el-row>
-          <el-col :span="4">
-            <el-button type="primary" @click="loadTable(1)">载入数据</el-button>
-            <el-button v-if="!isEditing" type="primary" style="margin-bottom: 10px" @click="startEditing">编辑</el-button>
-            <el-button v-else type="success" style="margin-bottom: 10px" @click="finishEditing">完成编辑</el-button>
-          </el-col>
-          <el-col :span="1">
-            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>
-          </el-col>
-        </el-row>
-        <el-table :data="tableData" style="width: 100%" stripe border :row-class-name="getRowClassName">
-          <el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label">
-            <template slot-scope="scope">
-              <template v-if="isEditing">
-                <el-input v-model.number="scope.row[column.prop]" size="small" />
-              </template>
-              <template v-else>
-                {{ scope.row[column.prop] }}
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <template v-if="isEditing">
-                <el-button type="text" size="small" @click="deleteRow(scope.$index)">删除</el-button>
-              </template>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-row type="flex" justify="center" style="margin-top: 10px">
-          <el-pagination
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :current-page="pageNum"
-            @prev-click="loadTable"
-            @current-change="loadTable"
-            @next-click="loadTable"
-          />
-        </el-row>
+        <PaginationTable :columns="columns" />
         <v-chart class="echart1" :option="option" autoresize />
         <div class="demo-input-suffix">
           <h1 class="support">
@@ -75,16 +37,15 @@
 <script>
 
 import axios from 'axios'
-// import PaginationTable from './pagination-table.vue'
+import PaginationTable from './component/pagination-table.vue'
 
 export default {
   name: 'PagePermission',
-  // components: { SwitchRoles },
+  components: {
+    PaginationTable
+  },
   data() {
     return {
-      aa: 'hello',
-      support: 0.4,
-      confidence: 0.4,
       resources: '',
       tableData: [], // 存储表格数据的数组
       showTable: false, // 控制表格显示的标志

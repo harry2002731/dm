@@ -15,7 +15,7 @@ const componentsRouter = {
   children: [
     {
       path: 'kmeans',
-      component: () => import('@/views/components-demo/kmeans.vue'),
+      component: () => import('@/views/demo/kmeans.vue'),
       name: 'K-means',
       meta: { title: 'K-means' }
     }
