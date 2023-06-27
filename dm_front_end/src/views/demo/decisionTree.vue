@@ -141,11 +141,16 @@ export default {
       ]
     },
     post() {
-      axios.post('/post_test', {
-        sepL: parseFloat(this.input3),
-        sepW: parseFloat(this.input4),
-        petL: parseFloat(this.input5),
-        petW: parseFloat(this.input6)
+      axios.post('http://localhost:8080/api/post_test', {
+        SepL: parseFloat(this.input3),
+        SepW: parseFloat(this.input4),
+        PetL: parseFloat(this.input5),
+        PetW: parseFloat(this.input6)
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
         .then(res => {
           console.log(res.data)

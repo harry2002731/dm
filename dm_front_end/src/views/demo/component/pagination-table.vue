@@ -77,7 +77,7 @@ export default {
   methods: {
     loadTable(num) {
       this.pageNum = num
-      axios.get('/user/page?pageNum=' + this.pageNum + '&pageSize=' + this.pageSize).then(res => {
+      axios.get('http://localhost:8080/api/user/page?pageNum=' + this.pageNum + '&pageSize=' + this.pageSize).then(res => {
         this.tableData = res.data.list
       })
     },
