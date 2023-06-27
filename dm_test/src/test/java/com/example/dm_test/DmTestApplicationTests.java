@@ -1,5 +1,6 @@
 package com.example.dm_test;
 
+import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
 import com.example.dm_test.service.AprioriService;
 import com.example.dm_test.service.ClassificationService;
@@ -23,7 +24,8 @@ class DmTestApplicationTests {
 	private IrisService irisService;
 
 	@Autowired
-//	private ClusteringService clusteringService;
+	private ClusteringService clusteringService;
+	@Autowired
 	private ClassificationService classificationService;
 
 	@Autowired
@@ -52,6 +54,13 @@ class DmTestApplicationTests {
 	public void testApriori()
 	{
 		aprioriService.performApriori();
+	}
+
+	@Test
+	public void testClustering()
+	{
+		List<ClusterRes> a = clusteringService.performClustering(3);
+		System.out.println(a);
 	}
 
 }
