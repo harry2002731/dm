@@ -30,7 +30,7 @@ import java.util.List;
 public class ClassificationService {
     @Autowired
     private IrisMapper irisMapper;
-    public void performClassification()
+    public String performClassification(float attr1, float attr2, float attr3, float attr4)
     {
         List<Iris> irisList = irisMapper.getAllIris();
 
@@ -42,8 +42,8 @@ public class ClassificationService {
         try {
             classifier.buildClassifier(instances);
             // 创建一个新的Iris对象，用于分类
-            Iris newIris = new Iris(3.7f, 5.4f, 0.2f, 1.5f);
-
+//            Iris newIris = new Iris(3.7f, 5.4f, 0.2f, 1.5f);
+            Iris newIris = new Iris(attr1, attr2, attr3, attr4);
             // 将新的Iris对象转换为Instance
             double[] values = new double[instances.numAttributes()];
             values[0] = newIris.getSepL();
@@ -60,30 +60,33 @@ public class ClassificationService {
             String predictedClassLabel = instances.classAttribute().value((int) classValue);
 
             System.out.println("Predicted class label: " + predictedClassLabel);
+            return predictedClassLabel;
         }catch (Exception e)
         {
             e.printStackTrace();
+            String res_fail = "Fail";
+            return res_fail;
         }
 
-        // visualization
-        try {
-            TreeVisualizer visualizer = new TreeVisualizer(null, classifier.graph(), new PlaceNode2());
-            visualizer.setSize(800, 600);
-
-            // 保存为图片
-            JFrame frame = new JFrame("Decision Tree");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
-            frame.getContentPane().add(visualizer);
-            frame.setVisible(true);
-            visualizer.fitToScreen();
-
-            savePic(frame);
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
+//        // visualization
+//        try {
+//            TreeVisualizer visualizer = new TreeVisualizer(null, classifier.graph(), new PlaceNode2());
+//            visualizer.setSize(800, 600);
+//
+//            // 保存为图片
+//            JFrame frame = new JFrame("Decision Tree");
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            frame.setSize(800, 600);
+//            frame.getContentPane().add(visualizer);
+//            frame.setVisible(true);
+//            visualizer.fitToScreen();
+//
+//            savePic(frame);
+//        }catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//
     }
 
     public void savePic(JFrame jf)

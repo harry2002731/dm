@@ -1,6 +1,7 @@
 package com.example.dm_test;
 
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.service.AprioriService;
 import com.example.dm_test.service.ClassificationService;
 import com.example.dm_test.service.ClusteringService;
 import com.example.dm_test.service.IrisService;
@@ -24,6 +25,9 @@ class DmTestApplicationTests {
 	@Autowired
 //	private ClusteringService clusteringService;
 	private ClassificationService classificationService;
+
+	@Autowired
+	private AprioriService aprioriService;
 	@Test
 	public void testGetAllIris(){
 		List<Iris> irisList = irisService.getAllIris();
@@ -38,9 +42,16 @@ class DmTestApplicationTests {
 	}
 
 	@Test
-	public void testClustering()
+	public void testClassification()
 	{
-		classificationService.performClassification();
+		String a = classificationService.performClassification(3.7f, 5.4f, 0.2f, 1.5f);
+		System.out.println(a);
+	}
+
+	@Test
+	public void testApriori()
+	{
+		aprioriService.performApriori();
 	}
 
 }
