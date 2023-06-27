@@ -32,7 +32,7 @@ public class IrisDataController {
     @Autowired
     private IrisService irisService;
 
-    @GetMapping("/iris_data")
+    @GetMapping("/api/user/page")
     public PageInfo<Iris> getAllUsers(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
     {
         logger.info("Received request with pageNum: {}, pageSize: {}", pageNum, pageSize);

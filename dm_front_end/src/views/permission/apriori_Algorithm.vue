@@ -118,8 +118,8 @@ export default {
     },
     loadTable(num) {
       this.pageNum = num
-      axios.get('/user/page?pageNum=' + this.pageNum + '&pageSize=' + this.pageSize + '&name=' + this.name).then(res => {
-        this.tableData = res.data
+      axios.get('/user/page?pageNum=' + this.pageNum + '&pageSize=' + this.pageSize).then(res => {
+        this.tableData = res.data.list
       })
     },
     startEditing() {
