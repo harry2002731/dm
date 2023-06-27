@@ -57,6 +57,13 @@
     <v-chart class="echart1" :option="option" autoresize />
     <el-main>
       <el-row>
+        <div class="block">
+          <el-slider
+            v-model="input1"
+            show-input
+            @change="showChart()"
+          />
+        </div>
         <div id="echart1" />
       </el-row>
     </el-main>
@@ -65,8 +72,9 @@
 
 <script>
 
-import ecStat from 'echarts-stat'
+// import ecStat from 'echarts-stat'
 import axios from 'axios'
+// import echarts from "echarts";
 
 export default {
   name: 'PagePermission',
@@ -134,35 +142,35 @@ export default {
     showChart() {
       axios.get('http://localhost:8080/api/clu_test?K_num=' + this.input1).then(res => {
         this.pieces_raw_data = res.data
+        const echarts = require('echarts')
+        document.getElementById('echart1').removeAttribute('_echarts_instance_')
+        const myChart = echarts.init(document.getElementById('echart1'), 'walden')
+        var colors = [
+          '#37A2DA',
+          '#e06343',
+          '#37a354',
+          '#b55dba',
+          '#b5bd48',
+          '#8378EA',
+          '#96BFFF'
+        ]
+        var data = []
+        for (var i = 0; i < this.pieces_raw_data.length; i++) {
+          data.push({ value: [this.pieces_raw_data[i].x, this.pieces_raw_data[i].y], category: this.pieces_raw_data[i].clu_res })
+        }
+        const option = {
+          xAxis: {},
+          yAxis: {},
+          series: data.map(item => ({
+            type: 'scatter',
+            data: [item.value],
+            itemStyle: {
+              color: colors[item.category] // 根据类别设置颜色
+            }
+          }))
+        }
+        myChart.setOption(option)
       })
-      const echarts = require('echarts')
-      const myChart = echarts.init(document.getElementById('echart1'), 'walden')
-      echarts.registerTransform(ecStat.transform.clustering)
-      var colors = [
-        '#37A2DA',
-        '#e06343',
-        '#37a354',
-        '#b55dba',
-        '#b5bd48',
-        '#8378EA',
-        '#96BFFF'
-      ]
-      var data = []
-      for (var i = 0; i < this.pieces_raw_data.length; i++) {
-        data.push({ value: [this.pieces_raw_data[i].x, this.pieces_raw_data[i].y], category: this.pieces_raw_data[i].clu_res })
-      }
-      const option = {
-        xAxis: {},
-        yAxis: {},
-        series: data.map(item => ({
-          type: 'scatter',
-          data: [item.value],
-          itemStyle: {
-            color: colors[item.category] // 根据类别设置颜色
-          }
-        }))
-      }
-      myChart.setOption(option)
     }
   }
 }
@@ -180,7 +188,7 @@ export default {
 }
 
 #echart1 {
-  margin-top: 100px;
+  margin-top: 0px;
   left: 0;
   height: 100vh;
 }
