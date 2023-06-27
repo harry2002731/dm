@@ -1,16 +1,17 @@
 package com.example.dm_test.controller;
+import com.example.dm_test.entity.AprioriData;
 import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.mapper.AprioriMapper;
 import com.example.dm_test.mapper.IrisMapper;
-import com.example.dm_test.service.ClassificationService;
-import com.example.dm_test.service.ClusteringService;
-import com.example.dm_test.service.IrisService;
+import com.example.dm_test.service.*;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,10 +20,12 @@ public class IrisDataController {
     private static final Logger logger = LoggerFactory.getLogger(IrisDataController.class);
     private final IrisMapper irisMapper;
 
+
     @Autowired
     public IrisDataController(IrisMapper irisMapper) {
         this.irisMapper = irisMapper;
     }
+
 
     @GetMapping("/api/data")
     public List<Iris> getData(){
@@ -37,6 +40,14 @@ public class IrisDataController {
 
     @Autowired
     private ClusteringService clusteringService;
+
+    @Autowired
+    private RegressionService regressionService;
+
+    @Autowired
+    private AprioriService aprioriService;
+
+
 
     @GetMapping("/api/user/page")
     public PageInfo<Iris> getAllUsers(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
@@ -61,6 +72,56 @@ public class IrisDataController {
     {
         logger.info("Received request with K_num: {} ", K_num);
         return clusteringService.performClustering(K_num);
+    }
+
+    @GetMapping("/api/reg_test")
+    public double[] getRegressionResult(@RequestParam(defaultValue = "2") int degree)
+    {
+        logger.info("Received request params: {}",degree);
+        return regressionService.performRegression(degree);
+    }
+
+    @GetMapping("/api/apri")
+    public List<double[]> getApriData(@RequestParam(defaultValue = "0.4") double support, @RequestParam(defaultValue = "0.5") double confidence)
+    {
+        List<AprioriData> aprioriDataList = aprioriService.getAllApriori();
+        List<String> transactions = new ArrayList<>();
+        for (AprioriData aprioriData : aprioriDataList)
+        {
+            String transaction = "";
+            float bread = aprioriData.getBread();
+            float egg = aprioriData.getEggs();
+            float coke = aprioriData.getCoke();
+            float cereal = aprioriData.getCereal();
+            float milk = aprioriData.getMilk();
+
+            if (milk == 1) {
+                transaction += "milk,";
+            }
+            if (bread == 1) {
+                transaction += "bread,";
+            }
+            if (egg == 1) {
+                transaction += "eggs,";
+            }
+            if (coke == 1) {
+                transaction += "coke,";
+            }
+            if (cereal == 1) {
+                transaction += "cereal,";
+            }
+
+            // 移除最后一个逗号
+            if (!transaction.isEmpty()) {
+                transaction = transaction.substring(0, transaction.length() - 1);
+                transactions.add(transaction);
+            }
+
+            System.out.println(transaction);
+        }
+        NAprioriService nAprioriService1 = new NAprioriService(transactions);
+        logger.info("Received request support: {}, confidence : {}",support, confidence);
+        return nAprioriService1.performApriori(support, confidence);
     }
 
 
