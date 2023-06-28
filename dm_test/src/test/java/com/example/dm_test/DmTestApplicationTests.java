@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.*;
 
 @SpringBootTest
@@ -48,10 +49,11 @@ class DmTestApplicationTests {
 	}
 
 	@Test
-	public void testClassification()
-	{
+	public void testClassification() throws IOException {
 		String a = classificationService.performClassification(3.7f, 5.4f, 0.2f, 1.5f);
 		System.out.println(a);
+		String b = classificationService.getPath();
+		System.out.println(b);
 	}
 
 //	@Test

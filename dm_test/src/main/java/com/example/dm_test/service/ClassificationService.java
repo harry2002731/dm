@@ -3,7 +3,12 @@ package com.example.dm_test.service;
 import com.example.dm_test.entity.Iris;
 import com.example.dm_test.mapper.IrisMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ResourceUtils;
 import sun.reflect.generics.tree.Tree;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -32,6 +37,23 @@ import java.util.List;
 public class ClassificationService {
     @Autowired
     private IrisMapper irisMapper;
+
+    @Value("${file-save-path}")
+    private String fileSavePath;
+    public String getPath()
+    {
+        String relativePath = "static/2.png";
+        try
+        {
+            String absolutePath = ResourceUtils.getFile("classpath:" + relativePath).getAbsolutePath();
+            return absolutePath;
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            return "fail";
+        }
+
+    }
     public String performClassification(float attr1, float attr2, float attr3, float attr4)
     {
         List<Iris> irisList = irisMapper.getAllIris();
@@ -154,7 +176,7 @@ public class ClassificationService {
     public String treeVisualization(REPTree classifier) {
         // visualization
         try {
-            String savePath = "/home/benny/Desktop/decisionTree.png";
+            String savePath = fileSavePath + "/tree.png";
             // 创建dot文件
             File dotFile = new File("/home/benny/Desktop/decisionTree.dot");
             FileWriter writer = new FileWriter(dotFile);
