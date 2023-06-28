@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ResourceUtils;
 import sun.reflect.generics.tree.Tree;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.Logistic;
+import weka.classifiers.functions.SMO;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -32,6 +35,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class ClassificationService {
@@ -52,6 +56,53 @@ public class ClassificationService {
             e.printStackTrace();
             return "fail";
         }
+
+    }
+
+    public double[] validatePrecision()
+    {
+        List<Iris> irisList = irisMapper.getAllIris();
+
+        Instances instances = convertToInstances(irisList);
+
+        int folds = 5;
+
+        Logistic logistic = new Logistic();
+        REPTree classifier = new REPTree();
+        SMO svm = new SMO();
+
+        try{
+            Evaluation eval_logi = new Evaluation(instances);
+            Evaluation eval_tree = new Evaluation(instances);
+            Evaluation eval_svm = new Evaluation(instances);
+            eval_logi.crossValidateModel(logistic, instances, folds, new Random(1));
+            eval_tree.crossValidateModel(classifier, instances, folds, new Random(1));
+            eval_svm.crossValidateModel(svm, instances, folds, new Random(1));
+
+            // 输出召回率和精确率
+            System.out.println("Logistic");
+            System.out.println("召回率：" + eval_logi.weightedRecall());
+            System.out.println("精确率：" + eval_logi.weightedPrecision());
+
+            System.out.println("tree");
+            System.out.println("召回率：" + eval_tree.weightedRecall());
+            System.out.println("精确率：" + eval_tree.weightedPrecision());
+
+            System.out.println("SVM");
+            System.out.println("召回率：" + eval_svm.weightedRecall());
+            System.out.println("精确率：" + eval_svm.weightedPrecision());
+            double[] res = {eval_logi.weightedRecall(), eval_logi.weightedPrecision(),eval_tree.weightedRecall(),
+                    eval_tree.weightedPrecision(),eval_svm.weightedRecall(),eval_svm.weightedPrecision()};
+            return res;
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            double[] fail_arr = new double[6];
+            return fail_arr;
+        }
+
+
 
     }
     public String performClassification(float attr1, float attr2, float attr3, float attr4)
@@ -149,30 +200,6 @@ public class ClassificationService {
 
 
 
-
-//    public void treeVisualization(J48 classifier)
-//    {
-//        // visualization
-//        try {
-//            TreeVisualizer visualizer = new TreeVisualizer(null, classifier.graph(), new PlaceNode2());
-//            visualizer.setBackground(Color.WHITE);
-//            visualizer.setSize(800, 600);
-//
-//            // 保存为图片
-//            JFrame frame = new JFrame("Decision Tree");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setSize(800, 600);
-//            frame.getContentPane().add(visualizer);
-//            frame.setVisible(true);
-//            visualizer.fitToScreen();
-//
-//            savePic(frame);
-//        }catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-
     public String treeVisualization(REPTree classifier) {
         // visualization
         try {
@@ -209,30 +236,6 @@ public class ClassificationService {
         }
     }
 
-
-//    public void savePic(JFrame jf) {
-//        // 得到窗口内容面板
-//        Container content = jf.getContentPane();
-//        // 创建缓冲图片对象
-//        BufferedImage img = new BufferedImage(jf.getWidth(), jf.getHeight(), BufferedImage.TYPE_INT_RGB);
-//
-//        // 得到图形对象
-//        Graphics2D g2d = img.createGraphics();
-//        // 设置背景色为白色
-//        g2d.setColor(Color.WHITE);
-//        g2d.fillRect(0, 0, jf.getWidth(), jf.getHeight());
-//        // 将窗口内容面板输出到图形对象中
-//        content.printAll(g2d);
-//        // 保存为图片
-//        File f = new File("/home/benny/Desktop/saveScreen.jpg");
-//        try {
-//            ImageIO.write(img, "jpg", f);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        // 释放图形对象
-//        g2d.dispose();
-//    }
 
     public void savePic(JFrame jf, File imageFile) {
         // 创建缓冲图片对象

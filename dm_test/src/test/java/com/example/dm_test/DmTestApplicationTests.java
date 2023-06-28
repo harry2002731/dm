@@ -4,7 +4,6 @@ import com.example.dm_test.entity.AprioriData;
 import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
 import com.example.dm_test.service.*;
-import org.apache.catalina.Cluster;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,8 +51,9 @@ class DmTestApplicationTests {
 	public void testClassification() throws IOException {
 		String a = classificationService.performClassification(3.7f, 5.4f, 0.2f, 1.5f);
 		System.out.println(a);
-		String b = classificationService.getPath();
-		System.out.println(b);
+//		String b = classificationService.getPath();
+//		System.out.println(b);
+		classificationService.validatePrecision();
 	}
 
 //	@Test
@@ -92,10 +92,18 @@ class DmTestApplicationTests {
 //	}
 
 	@Test
+	public void testRANSAC()
+	{
+		regressionService.performRANSAC();
+	}
+
+	@Test
 	public void testClustering()
 	{
-		List<ClusterRes> a = clusteringService.performClustering(3);
-		System.out.println(a);
+//		List<ClusterRes> a = clusteringService.performKmeansClustering( 3,2);
+//		System.out.println(a);
+		List<ClusterRes> b = clusteringService.performDBSCAN(2,0.3,2);
+		System.out.println(b);
 	}
 
 	@Test

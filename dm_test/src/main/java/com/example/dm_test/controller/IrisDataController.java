@@ -2,7 +2,6 @@ package com.example.dm_test.controller;
 import com.example.dm_test.entity.AprioriData;
 import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
-import com.example.dm_test.mapper.AprioriMapper;
 import com.example.dm_test.mapper.IrisMapper;
 import com.example.dm_test.service.*;
 import com.github.pagehelper.PageInfo;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,10 +67,16 @@ public class IrisDataController {
     }
 
     @GetMapping("/api/clu_test")
-    public List<ClusterRes> getClusteringresult(@RequestParam(defaultValue = "3") int K_num)
+    public List<ClusterRes> getClusteringresult(@RequestParam(defaultValue = "3") int K_num, @RequestParam(defaultValue = "1") int dataset)
     {
-        logger.info("Received request with K_num: {} ", K_num);
-        return clusteringService.performClustering(K_num);
+        logger.info("Received request with K_num: {} , dataset choose {}", K_num, dataset);
+        return clusteringService.performKmeansClustering(K_num, dataset);
+    }
+
+    @GetMapping("/api/dbscan")
+    public List<ClusterRes> getDBSCANRes(@RequestParam int dataset, @RequestParam double epsilon, @RequestParam int minPts)
+    {
+        return clusteringService.performDBSCAN(dataset,epsilon,minPts);
     }
 
     @GetMapping("/api/reg_test")

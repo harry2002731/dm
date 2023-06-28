@@ -11,6 +11,7 @@ import weka.core.Instances;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
@@ -87,9 +88,92 @@ public class RegressionService {
             return a;
         }
 
-
-
-
-
     }
+
+
+    // 使用RANSAC算法拟合直线模型
+    private static LineModel ransac(Instances data, int numIterations, double inlierThreshold, double confidence) {
+        int numPoints = data.numInstances();
+        int numInliers = (int) (numPoints * confidence);
+
+        LineModel bestModel = null;
+        int bestNumInliers = 0;
+
+        for (int i = 0; i < numIterations; i++) {
+            // 随机选择两个数据点作为模型的参数
+            Instance instance1 = data.instance(new Random().nextInt(numPoints));
+            Instance instance2 = data.instance(new Random().nextInt(numPoints));
+
+            // 构建模型
+            LineModel model = new LineModel(instance1, instance2);
+
+            // 计算当前模型的内点数量
+            int numCurrentInliers = 0;
+            for (int j = 0; j < numPoints; j++) {
+                Instance instance = data.instance(j);
+                if (model.isInlier(instance, inlierThreshold)) {
+                    numCurrentInliers++;
+                }
+            }
+
+            // 更新最优模型
+            if (numCurrentInliers > bestNumInliers) {
+                bestModel = model;
+                bestNumInliers = numCurrentInliers;
+            }
+
+            // 判断是否已找到足够数量的内点
+            if (bestNumInliers >= numInliers) {
+                break;
+            }
+        }
+
+        return bestModel;
+    }
+
+    // 直线模型
+    private static class LineModel {
+        private final double slope;
+        private final double intercept;
+
+        public LineModel(Instance instance1, Instance instance2) {
+            double x1 = instance1.value(0);
+            double y1 = instance1.value(1);
+            double x2 = instance2.value(0);
+            double y2 = instance2.value(1);
+
+            this.slope = (y2 - y1) / (x2 - x1);
+            this.intercept = y1 - slope * x1;
+        }
+
+        public double getSlope() {
+            return slope;
+        }
+
+        public double getIntercept() {
+            return intercept;
+        }
+
+        public boolean isInlier(Instance instance, double threshold) {
+            double x = instance.value(0);
+            double y = instance.value(1);
+
+            double residual = Math.abs(y - (slope * x + intercept));
+            return residual <= threshold;
+        }
+    }
+
+    public void performRANSAC()
+    {
+        List<RegressionData> regressionData = regressionMapper.getAllregression_noise();
+        Instances instances = convertToInstances(regressionData);
+
+        LineModel lineModel = ransac(instances, 3000, 0.1, 0.9);
+
+        // 输出拟合结果
+        System.out.println("拟合结果：");
+        System.out.println("斜率：" + lineModel.getSlope());
+        System.out.println("截距：" + lineModel.getIntercept());
+    }
+
 }
