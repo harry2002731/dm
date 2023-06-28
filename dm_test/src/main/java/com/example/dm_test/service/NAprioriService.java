@@ -267,6 +267,8 @@ public class NAprioriService {
 
     public List<double[]> performApriori(double supp, double confid)
     {
+        System.out.println("enfcwicfnirwhfciuhruic");
+        System.out.println(supp);
         List<String> transactions = new ArrayList<>();
         List<double[]> out_data = new ArrayList<>();
 //        List<AprioriData> aprioriDataList = getAllApData();

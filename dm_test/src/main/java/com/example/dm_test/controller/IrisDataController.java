@@ -85,6 +85,7 @@ public class IrisDataController {
     public List<double[]> getApriData(@RequestParam(defaultValue = "0.4") double support, @RequestParam(defaultValue = "0.5") double confidence)
     {
         List<AprioriData> aprioriDataList = aprioriService.getAllApriori();
+        double support_processed = support / aprioriDataList.size();
         List<String> transactions = new ArrayList<>();
         for (AprioriData aprioriData : aprioriDataList)
         {
@@ -120,8 +121,15 @@ public class IrisDataController {
             System.out.println(transaction);
         }
         NAprioriService nAprioriService1 = new NAprioriService(transactions);
-        logger.info("Received request support: {}, confidence : {}",support, confidence);
+        logger.info("Received request support: {}, confidence : {}",support_processed, confidence);
         return nAprioriService1.performApriori(support, confidence);
+    }
+
+    @GetMapping("/api/tree_visualization")
+    public String getImageUrl(@RequestParam() int height, @RequestParam() int leaves)
+    {
+        logger.info("received params: height {}, leaves {}", height, leaves);
+        return classificationService.getTreeVisualization(height,leaves);
     }
 
 
