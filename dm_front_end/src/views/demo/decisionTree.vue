@@ -97,6 +97,7 @@
 import PaginationTable from '@/views/components-demo/pagination-table.vue'
 
 import axios from 'axios'
+// import echarts from 'echarts'
 export default {
   name: 'PagePermission',
   components: { PaginationTable },
@@ -122,6 +123,7 @@ export default {
       input5: '',
       input6: '',
       input7: '',
+      a: [['category', 'precision', 'recall']],
       columns: [
         { prop: 'id', label: 'id' },
         { prop: 'petW', label: 'petW' },
@@ -146,107 +148,109 @@ export default {
 
   methods: {
     draw(id) {
-      const echarts = require('echarts')
-      this.charts = echarts.init(document.getElementById('echart1'), 'walden')
-      this.charts.setOption({
-        title: {
-          text: 'Comparison of Decision Tree'
-        },
-        legend: {},
-        tooltip: {},
-        dataset: {
-          source: this.source // 连接数据
-        },
-        xAxis: { type: 'category' },
-        yAxis: {
-          // 这个地方如果需要在Y轴定义最大值就放开,如果需要根据数据自适应的话,就注释掉
-          // type: "value",
-          // max: this.score,
-          // maxInterval: this.score * 0.2,
-          // minInterval: 1,
-          // splitNumber: 4
-        },
-        grid: { bottom: 30 },
-        series: [
-          {
-            type: 'bar',
-            barCategoryGap: '40%',
-            itemStyle: { color: '#999' },
-            tooltip: {
-              formatter: params => {
-                // console.log(params)
-                return ` ${params.value[0]} <br/>
-                         ${params.seriesName}:${params.value[1]}`
-              }
-            }
-          },
-          {
-            type: 'bar',
-            barCategoryGap: '40%',
-            itemStyle: { color: '#81cebe' },
-            tooltip: {
-              formatter: params => {
-                return ` ${params.value[0]} <br/>
-                         ${params.seriesName}:${params.value[2]}`
-              }
-            }
+      this.$axios.get('http://localhost:8080/classification/classify_vali')
+        .then((res) => {
+          console.log('访问后台')
+          // console.log(res.data)
+          this.source = res.data
+          for (var i = 0; i < res.data.length; i++) {
+            this.a.push([res.data[i].name, res.data[i].precision, res.data[i].recall])
           }
-        ]
+          const echarts = require('echarts')
+          this.charts = echarts.init(document.getElementById('echart1'), 'walden')
+          this.charts.setOption({
+            title: {
+              text: 'Comparison of Decision Tree'
+            },
+            legend: {},
+            tooltip: {},
+            dataset: {
+              source: this.a // 连接数据
+            },
+            xAxis: { type: 'category' },
+            yAxis: {},
+            grid: { bottom: 30 },
+            series: [
+              {
+                type: 'bar',
+                barCategoryGap: '40%',
+                itemStyle: { color: '#999' },
+                tooltip: {
+                  formatter: params => {
+                    // console.log(params)
+                    return ` ${params.value[0]} <br/>
+                         ${params.seriesName}:${params.value[1]}`
+                  }
+                }
+              },
+              {
+                type: 'bar',
+                barCategoryGap: '40%',
+                itemStyle: { color: '#81cebe' },
+                tooltip: {
+                  formatter: params => {
+                    return ` ${params.value[0]} <br/>
+                         ${params.seriesName}:${params.value[2]}`
+                  }
+                }
+              }
+            ]
+
+          })
+        })
+    },
+    checkRowData(row) {
+      return row.name !== '' && row.age !== null
+    },
+    show() {
+      this.tableData = [
+        { name: '张三', age: 20, editingFields: [] },
+        { name: '李四', age: 25, editingFields: [] },
+        { name: '王五', age: 30, editingFields: [] }
+      ]
+    },
+    post() {
+      axios.post('http://localhost:8080/api/post_test', {
+        SepL: parseFloat(this.input3),
+        SepW: parseFloat(this.input4),
+        PetL: parseFloat(this.input5),
+        PetW: parseFloat(this.input6)
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => {
+          console.log(res.data)
+          this.input7 = res.data
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    startEditing() {
+      this.isEditing = true
+    },
+    finishEditing() {
+      this.isEditing = false
+    },
+    getRowClassName(row) {
+      return this.isEditing ? 'editable-row' : ''
+    },
+    deleteRow(index) {
+      this.tableData.splice(index, 1)
+    },
+    addRow() {
+      this.tableData.push({ name: '', age: null })
+    },
+    showChart() {
+      axios.get('http://localhost:8080/api/visualization?K_num=' + this.input1).then(res => {
+        this.src = res.data
       })
     }
-  },
-  checkRowData(row) {
-    return row.name !== '' && row.age !== null
-  },
-  show() {
-    this.tableData = [
-      { name: '张三', age: 20, editingFields: [] },
-      { name: '李四', age: 25, editingFields: [] },
-      { name: '王五', age: 30, editingFields: [] }
-    ]
-  },
-  post() {
-    axios.post('http://localhost:8080/api/post_test', {
-      SepL: parseFloat(this.input3),
-      SepW: parseFloat(this.input4),
-      PetL: parseFloat(this.input5),
-      PetW: parseFloat(this.input6)
-    },
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => {
-        console.log(res.data)
-        this.input7 = res.data
-      })
-      .catch(error => {
-        console.error(error)
-      })
-  },
-  startEditing() {
-    this.isEditing = true
-  },
-  finishEditing() {
-    this.isEditing = false
-  },
-  getRowClassName(row) {
-    return this.isEditing ? 'editable-row' : ''
-  },
-  deleteRow(index) {
-    this.tableData.splice(index, 1)
-  },
-  addRow() {
-    this.tableData.push({ name: '', age: null })
-  },
-  showChart() {
-    axios.get('http://localhost:8080/api/visualization?K_num=' + this.input1).then(res => {
-      this.src = res.data
-    })
   }
 }
-
 </script>
 
 <style scoped>
