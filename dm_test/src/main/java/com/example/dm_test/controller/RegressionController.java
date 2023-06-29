@@ -1,6 +1,7 @@
 package com.example.dm_test.controller;
 
 
+import com.example.dm_test.entity.RegressionData;
 import com.example.dm_test.service.RegressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/regression")
 public class RegressionController {
@@ -17,6 +20,12 @@ public class RegressionController {
 
     @Autowired
     private RegressionService regressionService;
+
+    @GetMapping("/get_data")
+    public List<RegressionData> getRegressionData()
+    {
+        return regressionService.getRegressionData();
+    }
 
     @GetMapping("/poly_res")
     public double[] getRegressionResult(@RequestParam(defaultValue = "2") int degree)

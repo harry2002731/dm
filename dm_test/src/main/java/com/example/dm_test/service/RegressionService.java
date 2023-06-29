@@ -22,6 +22,11 @@ public class RegressionService {
     @Autowired
     private RegressionMapper regressionMapper;
 
+    public List<RegressionData> getRegressionData()
+    {
+        return regressionMapper.getAllregression_noise();
+    }
+
     private Instances convertToInstances(List<RegressionData> regressionDataList) {
         // 创建属性列表
         ArrayList<Attribute> attributes = new ArrayList<>();
