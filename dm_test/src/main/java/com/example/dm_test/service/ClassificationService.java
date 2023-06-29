@@ -218,7 +218,7 @@ public class ClassificationService {
         try {
             String savePath = fileSavePath + "/" + num + ".png";
             // 创建dot文件
-            File dotFile = new File("/home/benny/Desktop/" + num + ".dot");
+            File dotFile = new File(fileSavePath + num + ".dot");
             FileWriter writer = new FileWriter(dotFile);
             writer.write(classifier.graph());
             writer.close();
