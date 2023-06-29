@@ -76,7 +76,7 @@ public class RegressionController {
         logger.info("Received request params: {}",5);
         return regressionService.performPolyRegression(5);
     }
-    
+
     @GetMapping("/all")
     public List<double[]> getAllData()
     {
