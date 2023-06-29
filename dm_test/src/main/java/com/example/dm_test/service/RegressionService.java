@@ -96,7 +96,7 @@ public class RegressionService {
 
     public double[] performSimpleRegression()
     {
-        List<RegressionData> regressionData = regressionMapper.getAllregression();
+        List<RegressionData> regressionData = regressionMapper.getAllregression_noise();
         Instances instances = convertToInstances(regressionData);
         double[][] data = simpleRegressionData(instances);
         SimpleRegression regression = new SimpleRegression();
@@ -112,7 +112,7 @@ public class RegressionService {
 
     public double[] performPolyRegression(int degree)
     {
-        List<RegressionData> regressionData = regressionMapper.getAllregression();
+        List<RegressionData> regressionData = regressionMapper.getAllregression_noise();
         Instances instances = convertToInstances(regressionData);
 
         try

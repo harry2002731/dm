@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -74,5 +75,20 @@ public class RegressionController {
     {
         logger.info("Received request params: {}",5);
         return regressionService.performPolyRegression(5);
+    }
+
+    @GetMapping("/all")
+    public List<double[]> getAllData()
+    {
+        List<double[]> res = new ArrayList<>();
+        double[] simple = regressionService.performSimpleRegression();
+        res.add(simple);
+        for (int i = 2; i<= 5; i++)
+        {
+            double[] poly = regressionService.performPolyRegression(i);
+            res.add(poly);
+        }
+        res.add(regressionService.performRANSAC());
+        return res;
     }
 }
