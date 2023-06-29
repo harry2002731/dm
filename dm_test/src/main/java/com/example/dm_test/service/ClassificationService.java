@@ -120,7 +120,12 @@ public class ClassificationService {
             classifier.buildClassifier(instances);
             // 创建一个新的Iris对象，用于分类
 //            Iris newIris = new Iris(3.7f, 5.4f, 0.2f, 1.5f);
-            Iris newIris = new Iris(attr1, attr2, attr3, attr4);
+//            Iris newIris = new Iris(attr1, attr2, attr3, attr4);
+            Iris newIris = new Iris();
+            newIris.setSepL(attr1);
+            newIris.setSepW(attr2);
+            newIris.setPetL(attr3);
+            newIris.setPetW(attr4);
             // 将新的Iris对象转换为Instance
             double[] values = new double[instances.numAttributes()];
             values[0] = newIris.getSepL();
@@ -260,7 +265,7 @@ public class ClassificationService {
         g2d.dispose();
     }
 
-    private Instances convertToInstances(List<Iris> irisList) {
+    public Instances convertToInstances(List<Iris> irisList) {
         // 创建属性列表
         ArrayList<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("sepalLength"));

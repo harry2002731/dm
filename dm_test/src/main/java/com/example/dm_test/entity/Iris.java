@@ -16,13 +16,13 @@ public class Iris {
     private float PetW;
     private String Species;
 
-    public Iris(float SepL, float SepW, float PetL, float PetW)
-    {
-        this.SepL = SepL;
-        this.SepW = SepW;
-        this.PetL = PetL;
-        this.PetW = PetW;
-    }
+//    public Iris(float SepL, float SepW, float PetL, float PetW)
+//    {
+//        this.SepL = SepL;
+//        this.SepW = SepW;
+//        this.PetL = PetL;
+//        this.PetW = PetW;
+//    }
 
     public Long getId(){
         return id;
@@ -46,5 +46,29 @@ public class Iris {
 
     public String getSpecies(){
         return Species;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setPetL(float petL) {
+        PetL = petL;
+    }
+
+    public void setPetW(float petW) {
+        PetW = petW;
+    }
+
+    public void setSepL(float sepL) {
+        SepL = sepL;
+    }
+
+    public void setSepW(float sepW) {
+        SepW = sepW;
+    }
+
+    public void setSpecies(String species) {
+        Species = species;
     }
 }

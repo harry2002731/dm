@@ -1,5 +1,6 @@
 package com.example.dm_test.controller;
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.entity.StatsData;
 import com.example.dm_test.mapper.IrisMapper;
 import com.example.dm_test.service.*;
 import com.github.pagehelper.PageInfo;
@@ -138,6 +139,19 @@ public class IrisDataController {
 //    public String getPathURL() {
 //        return classificationService.getPath();
 //    }
+
+    @PostMapping("/api/update")
+    public void updateIrisData(@RequestBody Iris dataForUpdate)
+    {
+        irisMapper.updateIris(dataForUpdate);
+
+    }
+
+    @GetMapping("/api/stat")
+    public List<StatsData> getStats()
+    {
+        return irisService.getStats();
+    }
 
 
 

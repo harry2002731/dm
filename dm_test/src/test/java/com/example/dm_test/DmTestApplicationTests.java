@@ -3,6 +3,7 @@ package com.example.dm_test;
 import com.example.dm_test.entity.AprioriData;
 import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.entity.StatsData;
 import com.example.dm_test.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,13 @@ class DmTestApplicationTests {
 //		String b = classificationService.getPath();
 //		System.out.println(b);
 		classificationService.validatePrecision();
+	}
+
+	@Test
+	public void teststats()
+	{
+		List<StatsData> data = irisService.getStats();
+		System.out.println(data);
 	}
 
 //	@Test
