@@ -2,6 +2,7 @@ package com.example.dm_test.service;
 
 import com.example.dm_test.entity.RegressionData;
 import com.example.dm_test.mapper.RegressionMapper;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import weka.core.Attribute;
@@ -64,7 +65,37 @@ public class RegressionService {
         return coefficients;
     }
 
-    public double[] performRegression(int degree)
+    public double[] simpleRegression(Instances data)
+    {
+        int length = data.numInstances();
+
+        // 创建WeightedObservedPoints对象用于保存数据点
+        WeightedObservedPoints obs = new WeightedObservedPoints();
+
+        double[][] dataArray = new double[length][2];
+
+        // 将Instances对象中的数据点添加到WeightedObservedPoints对象中
+        for (Instance instance : data) {
+//            double x = instance.value(0);  // 假设输入数据只有一个属性，即x值
+//            double y = instance.value(1);  // 假设输出数据只有一个属性，即y值
+//            obs.add(x, y);
+            for (int i = 0; i < length; i++)
+            {
+                dataArray[i][0] = instance.value(0);
+                dataArray[i][1] = instance.value(1);
+            }
+        }
+
+        SimpleRegression regression = new SimpleRegression();
+        regression.addData(dataArray);
+        double[] linear_res = new double[2];
+        linear_res[0] = regression.getSlope();
+        linear_res[1] = regression.getIntercept();
+        return linear_res;
+
+    }
+
+    public double[] performPolyRegression(int degree)
     {
         List<RegressionData> regressionData = regressionMapper.getAllregression();
         Instances instances = convertToInstances(regressionData);
@@ -168,7 +199,7 @@ public class RegressionService {
         List<RegressionData> regressionData = regressionMapper.getAllregression_noise();
         Instances instances = convertToInstances(regressionData);
 
-        LineModel lineModel = ransac(instances, 3000, 0.1, 0.9);
+        LineModel lineModel = ransac(instances, 100000, 0.61, 0.99);
 
         // 输出拟合结果
         System.out.println("拟合结果：");
