@@ -2,6 +2,7 @@ package com.example.dm_test.controller;
 
 import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.entity.ValidateData;
 import com.example.dm_test.service.ClassificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class ClassificationController {
     private ClassificationService classificationService;
 
     @GetMapping("/classify_vali")
-    public double[] getValidationData()
+    public List<ValidateData> getValidationData()
     {
         return classificationService.validatePrecision();
     }

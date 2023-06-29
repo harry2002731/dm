@@ -1,6 +1,7 @@
 package com.example.dm_test.service;
 
 import com.example.dm_test.entity.Iris;
+import com.example.dm_test.entity.ValidateData;
 import com.example.dm_test.mapper.IrisMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,8 +60,9 @@ public class ClassificationService {
 
     }
 
-    public double[] validatePrecision()
+    public List<ValidateData> validatePrecision()
     {
+        List<ValidateData> res = new ArrayList<>();
         List<Iris> irisList = irisMapper.getAllIris();
 
         Instances instances = convertToInstances(irisList);
@@ -83,23 +85,28 @@ public class ClassificationService {
             System.out.println("Logistic");
             System.out.println("召回率：" + eval_logi.weightedRecall());
             System.out.println("精确率：" + eval_logi.weightedPrecision());
+            ValidateData logisticValiData = new ValidateData("Logistic Regression", eval_logi.weightedPrecision(), eval_logi.weightedRecall());
 
             System.out.println("tree");
             System.out.println("召回率：" + eval_tree.weightedRecall());
             System.out.println("精确率：" + eval_tree.weightedPrecision());
+            ValidateData treeValiData = new ValidateData("CART Decision Tree", eval_tree.weightedPrecision(), eval_tree.weightedRecall());
 
             System.out.println("SVM");
             System.out.println("召回率：" + eval_svm.weightedRecall());
             System.out.println("精确率：" + eval_svm.weightedPrecision());
-            double[] res = {eval_logi.weightedRecall(), eval_logi.weightedPrecision(),eval_tree.weightedRecall(),
-                    eval_tree.weightedPrecision(),eval_svm.weightedRecall(),eval_svm.weightedPrecision()};
+            ValidateData SVMValiData = new ValidateData("SVM Classifier", eval_svm.weightedPrecision(), eval_svm.weightedRecall());
+            res.add(logisticValiData);
+            res.add(treeValiData);
+            res.add(SVMValiData);
             return res;
 
         }catch (Exception e)
         {
             e.printStackTrace();
-            double[] fail_arr = new double[6];
-            return fail_arr;
+            ValidateData fail = new ValidateData("fail",0,0);
+            res.add(fail);
+            return res;
         }
 
 
