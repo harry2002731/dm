@@ -20,10 +20,23 @@
               clearable
             />
           </h1>
-          <el-button type="primary" @click="showChart()">分析数据</el-button>
           <el-button type="primary" @click="showChart()">决策树结果</el-button>
         </div>
-        <div>
+        <div v-if="show_chart" class="demo-image__placeholder">
+          <div class="block">
+            <span class="demonstration">默认</span>
+            <el-image :src="src" />
+          </div>
+          <div class="block">
+            <span class="demonstration">自定义</span>
+            <el-image :src="src">
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
+              </div>
+            </el-image>
+          </div>
+        </div>
+        <div class="demo-input-suffix">
           <h1 class="support">
             <el-input
               v-model="input3"
@@ -74,20 +87,6 @@
         </el-main>
       </div>
     </template>
-    <div class="demo-image__placeholder">
-      <div class="block">
-        <span class="demonstration">默认</span>
-        <el-image :src="src" />
-      </div>
-      <div class="block">
-        <span class="demonstration">自定义</span>
-        <el-image :src="src">
-          <div slot="placeholder" class="image-slot">
-            加载中<span class="dot">...</span>
-          </div>
-        </el-image>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -97,6 +96,7 @@
 import PaginationTable from '@/views/components-demo/pagination-table.vue'
 
 import axios from 'axios'
+// import echarts from 'echarts'
 export default {
   name: 'PagePermission',
   components: { PaginationTable },
@@ -114,14 +114,16 @@ export default {
       showErrorDialog: false,
       isFocused: false,
       isEditing: false,
-      src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-      input1: '',
-      input2: '',
+      input1: '1',
+      input2: '1',
+      src: 'http://localhost:8080/images/tree?height=' + this.input1 + '&leaves=' + this.input2,
       input3: '',
       input4: '',
       input5: '',
       input6: '',
       input7: '',
+      show_chart: false,
+      a: [['category', 'precision', 'recall']],
       columns: [
         { prop: 'id', label: 'id' },
         { prop: 'petW', label: 'petW' },
@@ -141,112 +143,108 @@ export default {
     }
   },
   mounted() {
-    this.draw('report')
+    if (this.show_chart) { this.draw('report') }
   },
 
   methods: {
     draw(id) {
-      const echarts = require('echarts')
-      this.charts = echarts.init(document.getElementById('echart1'), 'walden')
-      this.charts.setOption({
-        title: {
-          text: 'Comparison of Decision Tree'
-        },
-        legend: {},
-        tooltip: {},
-        dataset: {
-          source: this.source // 连接数据
-        },
-        xAxis: { type: 'category' },
-        yAxis: {
-          // 这个地方如果需要在Y轴定义最大值就放开,如果需要根据数据自适应的话,就注释掉
-          // type: "value",
-          // max: this.score,
-          // maxInterval: this.score * 0.2,
-          // minInterval: 1,
-          // splitNumber: 4
-        },
-        grid: { bottom: 30 },
-        series: [
-          {
-            type: 'bar',
-            barCategoryGap: '40%',
-            itemStyle: { color: '#999' },
-            tooltip: {
-              formatter: params => {
-                // console.log(params)
-                return ` ${params.value[0]} <br/>
-                         ${params.seriesName}:${params.value[1]}`
-              }
-            }
-          },
-          {
-            type: 'bar',
-            barCategoryGap: '40%',
-            itemStyle: { color: '#81cebe' },
-            tooltip: {
-              formatter: params => {
-                return ` ${params.value[0]} <br/>
-                         ${params.seriesName}:${params.value[2]}`
-              }
-            }
+      this.$axios.get('http://localhost:8080/classification/classify_vali')
+        .then((res) => {
+          console.log('访问后台')
+          // console.log(res.data)
+          this.source = res.data
+          for (var i = 0; i < res.data.length; i++) {
+            this.a.push([res.data[i].name, res.data[i].precision, res.data[i].recall])
           }
-        ]
-      })
-    }
-  },
-  checkRowData(row) {
-    return row.name !== '' && row.age !== null
-  },
-  show() {
-    this.tableData = [
-      { name: '张三', age: 20, editingFields: [] },
-      { name: '李四', age: 25, editingFields: [] },
-      { name: '王五', age: 30, editingFields: [] }
-    ]
-  },
-  post() {
-    axios.post('http://localhost:8080/api/post_test', {
-      SepL: parseFloat(this.input3),
-      SepW: parseFloat(this.input4),
-      PetL: parseFloat(this.input5),
-      PetW: parseFloat(this.input6)
+          const echarts = require('echarts')
+          this.charts = echarts.init(document.getElementById('echart1'), 'walden')
+          this.charts.setOption({
+            title: {
+              text: 'Comparison of Decision Tree'
+            },
+            legend: {},
+            tooltip: {},
+            dataset: {
+              source: this.a // 连接数据
+            },
+            xAxis: { type: 'category' },
+            yAxis: {},
+            grid: { bottom: 30 },
+            series: [
+              {
+                type: 'bar',
+                barCategoryGap: '40%',
+                itemStyle: { color: '#999' },
+                tooltip: {
+                  formatter: params => {
+                    // console.log(params)
+                    return ` ${params.value[0]} <br/>
+                         ${params.seriesName}:${params.value[1]}`
+                  }
+                }
+              },
+              {
+                type: 'bar',
+                barCategoryGap: '40%',
+                itemStyle: { color: '#81cebe' },
+                tooltip: {
+                  formatter: params => {
+                    return ` ${params.value[0]} <br/>
+                         ${params.seriesName}:${params.value[2]}`
+                  }
+                }
+              }
+            ]
+
+          })
+        })
     },
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => {
-        console.log(res.data)
-        this.input7 = res.data
+    checkRowData(row) {
+      return row.name !== '' && row.age !== null
+    },
+
+    post() {
+      axios.post('http://localhost:8080/classification/new_data_vali', {
+        SepL: parseFloat(this.input3),
+        SepW: parseFloat(this.input4),
+        PetL: parseFloat(this.input5),
+        PetW: parseFloat(this.input6)
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-      .catch(error => {
-        console.error(error)
-      })
-  },
-  startEditing() {
-    this.isEditing = true
-  },
-  finishEditing() {
-    this.isEditing = false
-  },
-  getRowClassName(row) {
-    return this.isEditing ? 'editable-row' : ''
-  },
-  deleteRow(index) {
-    this.tableData.splice(index, 1)
-  },
-  addRow() {
-    this.tableData.push({ name: '', age: null })
-  },
-  showChart() {
-    axios.get('http://localhost:8080/api/visualization?K_num=' + this.input1).then(res => {
-      this.src = res.data
-    })
+        .then(res => {
+          console.log(res.data)
+          this.input7 = res.data
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    startEditing() {
+      this.isEditing = true
+    },
+    finishEditing() {
+      this.isEditing = false
+    },
+    getRowClassName(row) {
+      return this.isEditing ? 'editable-row' : ''
+    },
+    deleteRow(index) {
+      this.tableData.splice(index, 1)
+    },
+    addRow() {
+      this.tableData.push({ name: '', age: null })
+    },
+    showChart() {
+      this.src = 'http://localhost:8080/images/tree?height=' + this.input1 + '&leaves=' + this.input2
+      this.draw('report')
+      this.show_chart = true
+    }
   }
 }
-
 </script>
 
 <style scoped>
@@ -260,8 +258,8 @@ export default {
 }
 
 #echart1 {
-  margin-top: 100px;
+  margin-top: 0px;
   left: 0;
-  height: 100vh;
+  height: 60vh;
 }
 </style>
