@@ -141,9 +141,11 @@ public class IrisDataController {
 //    }
 
     @PostMapping("/api/update")
-    public void updateIrisData(@RequestBody Iris dataForUpdate)
+    public void updateIrisData(@RequestBody List<Iris> dataForUpdate)
     {
-        irisMapper.updateIris(dataForUpdate);
+        for (Iris iris : dataForUpdate) {
+            irisMapper.updateIris(iris);
+        }
 
     }
 

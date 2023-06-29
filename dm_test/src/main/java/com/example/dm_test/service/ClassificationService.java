@@ -171,7 +171,8 @@ public class ClassificationService {
         // classification begin
 //        J48 classifier = new J48();
         REPTree classifier = new REPTree();
-
+        Random random = new Random();
+        int randomNum = random.nextInt();
         try {
             if (maxdepth !=0 && minnum != 0)
             {
@@ -198,8 +199,8 @@ public class ClassificationService {
 //            String predictedClassLabel = instances.classAttribute().value((int) classValue);
 //
 //            System.out.println("Predicted class label: " + predictedClassLabel);
-            treeVisualization(classifier);
-            return treeVisualization(classifier);
+//            treeVisualization(classifier);
+            return treeVisualization(classifier,randomNum);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -212,12 +213,12 @@ public class ClassificationService {
 
 
 
-    public String treeVisualization(REPTree classifier) {
+    public String treeVisualization(REPTree classifier, int num) {
         // visualization
         try {
-            String savePath = fileSavePath + "/tree.png";
+            String savePath = fileSavePath + "/" + num + ".png";
             // 创建dot文件
-            File dotFile = new File("/home/benny/Desktop/decisionTree.dot");
+            File dotFile = new File("/home/benny/Desktop/" + num + ".dot");
             FileWriter writer = new FileWriter(dotFile);
             writer.write(classifier.graph());
             writer.close();
