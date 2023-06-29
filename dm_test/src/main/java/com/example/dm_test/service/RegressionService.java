@@ -102,8 +102,8 @@ public class RegressionService {
         SimpleRegression regression = new SimpleRegression();
         regression.addData(data);
         double[] linear_res = new double[2];
-        linear_res[0] = regression.getSlope();
-        linear_res[1] = regression.getIntercept();
+        linear_res[1] = regression.getSlope();
+        linear_res[0] = regression.getIntercept();
         return linear_res;
 
     }
@@ -221,8 +221,8 @@ public class RegressionService {
         System.out.println("拟合结果：");
         System.out.println("斜率：" + lineModel.getSlope());
         System.out.println("截距：" + lineModel.getIntercept());
-        res[0] = lineModel.getSlope();
-        res[1] = lineModel.getIntercept();
+        res[1] = lineModel.getSlope();
+        res[0] = lineModel.getIntercept();
         return res;
     }
 
