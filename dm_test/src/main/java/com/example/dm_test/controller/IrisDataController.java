@@ -2,7 +2,6 @@ package com.example.dm_test.controller;
 import com.example.dm_test.entity.AprioriData;
 import com.example.dm_test.entity.ClusterRes;
 import com.example.dm_test.entity.Iris;
-import com.example.dm_test.mapper.AprioriMapper;
 import com.example.dm_test.mapper.IrisMapper;
 import com.example.dm_test.service.*;
 import com.github.pagehelper.PageInfo;
@@ -68,10 +67,16 @@ public class IrisDataController {
     }
 
     @GetMapping("/api/clu_test")
-    public List<ClusterRes> getClusteringresult(@RequestParam(defaultValue = "3") int K_num)
+    public List<ClusterRes> getClusteringresult(@RequestParam(defaultValue = "3") int K_num, @RequestParam(defaultValue = "1") int dataset)
     {
-        logger.info("Received request with K_num: {} ", K_num);
-        return clusteringService.performClustering(K_num);
+        logger.info("Received request with K_num: {} , dataset choose {}", K_num, dataset);
+        return clusteringService.performKmeansClustering(K_num, dataset);
+    }
+
+    @GetMapping("/api/dbscan")
+    public List<ClusterRes> getDBSCANRes(@RequestParam int dataset, @RequestParam double epsilon, @RequestParam int minPts)
+    {
+        return clusteringService.performDBSCAN(dataset,epsilon,minPts);
     }
 
     @GetMapping("/api/reg_test")
@@ -85,6 +90,7 @@ public class IrisDataController {
     public List<double[]> getApriData(@RequestParam(defaultValue = "0.4") double support, @RequestParam(defaultValue = "0.5") double confidence)
     {
         List<AprioriData> aprioriDataList = aprioriService.getAllApriori();
+        double support_processed = support / aprioriDataList.size();
         List<String> transactions = new ArrayList<>();
         for (AprioriData aprioriData : aprioriDataList)
         {
@@ -120,9 +126,22 @@ public class IrisDataController {
             System.out.println(transaction);
         }
         NAprioriService nAprioriService1 = new NAprioriService(transactions);
-        logger.info("Received request support: {}, confidence : {}",support, confidence);
+        logger.info("Received request support: {}, confidence : {}",support_processed, confidence);
         return nAprioriService1.performApriori(support, confidence);
     }
+
+    @GetMapping("/api/tree_visualization")
+    public String getImageUrl(@RequestParam() int height, @RequestParam() int leaves)
+    {
+        logger.info("received params: height {}, leaves {}", height, leaves);
+        return classificationService.getTreeVisualization(height,leaves);
+    }
+
+//    @GetMapping("/api/static_test")
+//    public String getPathURL() {
+//        return classificationService.getPath();
+//    }
+
 
 
 

@@ -10,4 +10,7 @@ import java.util.List;
 public interface RegressionMapper {
     @Select("SELECT * FROM regression")
     List<RegressionData> getAllregression();
+
+    @Select("SELECT * FROM regression_noise")
+    List<RegressionData> getAllregression_noise();
 }
