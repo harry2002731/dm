@@ -20,10 +20,23 @@
               clearable
             />
           </h1>
-          <el-button type="primary" @click="showChart()">分析数据</el-button>
           <el-button type="primary" @click="showChart()">决策树结果</el-button>
         </div>
-        <div>
+        <div v-if="show_chart" class="demo-image__placeholder">
+          <div class="block">
+            <span class="demonstration">默认</span>
+            <el-image :src="src" />
+          </div>
+          <div class="block">
+            <span class="demonstration">自定义</span>
+            <el-image :src="src">
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
+              </div>
+            </el-image>
+          </div>
+        </div>
+        <div class="demo-input-suffix">
           <h1 class="support">
             <el-input
               v-model="input3"
@@ -74,20 +87,6 @@
         </el-main>
       </div>
     </template>
-    <div class="demo-image__placeholder">
-      <div class="block">
-        <span class="demonstration">默认</span>
-        <el-image :src="src" />
-      </div>
-      <div class="block">
-        <span class="demonstration">自定义</span>
-        <el-image :src="src">
-          <div slot="placeholder" class="image-slot">
-            加载中<span class="dot">...</span>
-          </div>
-        </el-image>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -115,14 +114,15 @@ export default {
       showErrorDialog: false,
       isFocused: false,
       isEditing: false,
-      src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-      input1: '',
-      input2: '',
+      input1: '1',
+      input2: '1',
+      src: 'http://localhost:8080/images/tree?height=' + this.input1 + '&leaves=' + this.input2,
       input3: '',
       input4: '',
       input5: '',
       input6: '',
       input7: '',
+      show_chart: false,
       a: [['category', 'precision', 'recall']],
       columns: [
         { prop: 'id', label: 'id' },
@@ -143,7 +143,7 @@ export default {
     }
   },
   mounted() {
-    this.draw('report')
+    if (this.show_chart) { this.draw('report') }
   },
 
   methods: {
@@ -202,15 +202,9 @@ export default {
     checkRowData(row) {
       return row.name !== '' && row.age !== null
     },
-    show() {
-      this.tableData = [
-        { name: '张三', age: 20, editingFields: [] },
-        { name: '李四', age: 25, editingFields: [] },
-        { name: '王五', age: 30, editingFields: [] }
-      ]
-    },
+
     post() {
-      axios.post('http://localhost:8080/api/post_test', {
+      axios.post('http://localhost:8080/classification/new_data_vali', {
         SepL: parseFloat(this.input3),
         SepW: parseFloat(this.input4),
         PetL: parseFloat(this.input5),
@@ -245,9 +239,9 @@ export default {
       this.tableData.push({ name: '', age: null })
     },
     showChart() {
-      axios.get('http://localhost:8080/api/visualization?K_num=' + this.input1).then(res => {
-        this.src = res.data
-      })
+      this.src = 'http://localhost:8080/images/tree?height=' + this.input1 + '&leaves=' + this.input2
+      this.draw('report')
+      this.show_chart = true
     }
   }
 }
@@ -264,8 +258,8 @@ export default {
 }
 
 #echart1 {
-  margin-top: 100px;
+  margin-top: 0px;
   left: 0;
-  height: 100vh;
+  height: 60vh;
 }
 </style>
