@@ -2,82 +2,41 @@
   <div class="app-container">
     <template>
       <div>
-        <el-row>
-          <el-col :span="4">
-            <el-button type="primary" @click="show()">载入数据</el-button>
-            <el-button v-if="!isEditing" type="primary" style="margin-bottom: 10px" @click="startEditing">编辑</el-button>
-            <el-button v-else type="success" style="margin-bottom: 10px" @click="finishEditing">完成编辑</el-button>
-          </el-col>
-          <el-col :span="1">
-            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>
-          </el-col>
-        </el-row>
-        <el-table :data="tableData" style="width: 100%" stripe border :row-class-name="getRowClassName">
-          <el-table-column prop="name" label="姓名">
-            <template slot-scope="scope">
-              <template v-if="isEditing">
-                <el-input v-model="scope.row.name" size="small" />
-              </template>
-              <template v-else>
-                {{ scope.row.name }}
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column prop="age" label="年龄">
-            <template slot-scope="scope">
-              <template v-if="isEditing">
-                <el-input v-model.number="scope.row.age" size="small" />
-              </template>
-              <template v-else>
-                {{ scope.row.age }}
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <template v-if="isEditing">
-                <el-button type="text" size="small" @click="deleteRow(scope.$index)">删除</el-button>
-              </template>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="demo-input-suffix">
-          <h1 class="support">
-            <el-input
-              v-model="input1"
-              size="medium"
-              placeholder="请输入支持度"
-              clearable
-            />
-          </h1>
-          <h1 class="support">
-            <el-input
-              v-model="input2"
-              size="medium"
-              placeholder="请输入置信度"
-              clearable
-            />
-          </h1>
-          <el-button type="primary" @click="showChart()">分析数据</el-button>
-          <el-button type="primary" @click="showChart()">散点图</el-button>
+        <PaginationTable :columns="columns" />
+        <div>
+          <el-row>
+            <el-col :span="2">
+              <el-button type="primary" @click="showChart()">散点图</el-button>
+              <div v-for="option in options" :key="option.value" style="margin-top: 10px">
+                <el-checkbox v-model="option.checked" :label="option.label" class="custom-checkbox" />
+              </div>
+            </el-col>
+            <el-col :span="22">
+              <v-chart class="echart1" :option="option" autoresize />
+              <el-main>
+                <div id="echart1" />
+              </el-main>
+            </el-col>
+          </el-row>
         </div>
       </div>
     </template>
-    <v-chart class="echart1" :option="option" autoresize />
-    <el-main>
-      <el-row>
-        <div id="echart1" />
-      </el-row>
-    </el-main>
+
   </div>
 </template>
 
 <script>
 
-import ecStat from 'echarts-stat'
+// import ecStat from 'echarts-stat'
+import axios from 'axios'
+import PaginationTable from '@/views/components-demo/pagination-table.vue'
+// import echarts from "echarts";
+// import echarts from "echarts";
+// import echarts from 'echarts'
 
 export default {
   name: 'PagePermission',
+  components: { PaginationTable },
   // components: { SwitchRoles },
   data() {
     return {
@@ -93,7 +52,28 @@ export default {
       isFocused: false,
       isEditing: false,
       input1: '',
-      input2: ''
+      input2: '',
+      data1: [],
+      datus: [],
+      data2: [],
+      pieces_raw_data: '',
+      checkList: ['选中且禁用', '复选框 A'],
+      columns: [
+        { prop: 'id', label: 'id' },
+        { prop: 'petW', label: 'petW' },
+        { prop: 'sepL', label: 'sepL' },
+        { prop: 'species', label: 'species' },
+        { prop: 'petL', label: 'petL' },
+        { prop: 'sepW', label: 'sepW' }
+      ],
+      options: [
+        { label: 'first-order', value: 1, checked: false, url: '/linear_test', param: [] },
+        { label: 'second-order', value: 2, checked: false, url: '/ransac', param: [] },
+        { label: 'third-order', value: 3, checked: false, url: '/poly_res/two', param: [] },
+        { label: 'fourth-order', value: 4, checked: false, url: '/poly_res/three', param: [] },
+        { label: 'fifth-order', value: 5, checked: false, url: '/poly_res/four', param: [] },
+        { label: 'ransac', value: 6, checked: false, url: '/poly_res/five', param: [] }
+      ]
     }
   },
 
@@ -124,139 +104,192 @@ export default {
     addRow() {
       this.tableData.push({ name: '', age: null })
     },
-    showChart() {
-      const echarts = require('echarts')
-      const myChart = echarts.init(document.getElementById('echart1'), 'walden')
-      echarts.registerTransform(ecStat.transform.clustering)
+    // showSelectedOptions() {
+    //   const selectedOptions = this.options
+    //     .filter(option => option.checked)
+    //     .map(option => option.url)
+    //   const selectedOptions2 = this.options
+    //     .filter(option => option.checked)
+    //     .map(option => option.value)
+    //   for (var i = 0; i < selectedOptions.length; i++) {
+    //     axios.get('http://localhost:8080/regression' + selectedOptions[i]).then(res => {
+    //       this.options[selectedOptions2[i]].param = this.generateFunction(res.data)
+    //       this.options[selectedOptions2[i]].param = this.generateFunction(res.data)
+    //     })
+    //   }
+    // },
+    // 生成一元函数
+    showSelectedOptions() {
+      var a = []
+      axios.get('http://localhost:8080/regression/get_data').then(res => {
+        for (var i = 0; i < res.data.length; i++) {
+          this.data2.push([res.data[i].x, res.data[i].y])
+        }
+      })
+      axios.get('http://localhost:8080/regression/all').then(res => {
+        for (var i = 0; i < res.data.length; i++) {
+          a.push(this.generateFunction(res.data[i]))
+        }
+        this.datus = a
+      })
+    },
+    generateFunction(data) {
+      // 获取数据的长度
+      const n = data.length
 
-      // prettier-ignore
-      const data = [
-        [3.275154, 2.957587],
-        [-3.344465, 2.603513],
-        [0.355083, -3.376585],
-        [1.852435, 3.547351],
-        [-2.078973, 2.552013],
-        [-0.993756, -0.884433],
-        [2.682252, 4.007573],
-        [-3.087776, 2.878713],
-        [-1.565978, -1.256985],
-        [2.441611, 0.444826],
-        [-0.659487, 3.111284],
-        [-0.459601, -2.618005],
-        [2.17768, 2.387793],
-        [-2.920969, 2.917485],
-        [-0.028814, -4.168078],
-        [3.625746, 2.119041],
-        [-3.912363, 1.325108],
-        [-0.551694, -2.814223],
-        [2.855808, 3.483301],
-        [-3.594448, 2.856651],
-        [0.421993, -2.372646],
-        [1.650821, 3.407572],
-        [-2.082902, 3.384412],
-        [-0.718809, -2.492514],
-        [4.513623, 3.841029],
-        [-4.822011, 4.607049],
-        [-0.656297, -1.449872],
-        [1.919901, 4.439368],
-        [-3.287749, 3.918836],
-        [-1.576936, -2.977622],
-        [3.598143, 1.97597],
-        [-3.977329, 4.900932],
-        [-1.79108, -2.184517],
-        [3.914654, 3.559303],
-        [-1.910108, 4.166946],
-        [-1.226597, -3.317889],
-        [1.148946, 3.345138],
-        [-2.113864, 3.548172],
-        [0.845762, -3.589788],
-        [2.629062, 3.535831],
-        [-1.640717, 2.990517],
-        [-1.881012, -2.485405],
-        [4.606999, 3.510312],
-        [-4.366462, 4.023316],
-        [0.765015, -3.00127],
-        [3.121904, 2.173988],
-        [-4.025139, 4.65231],
-        [-0.559558, -3.840539],
-        [4.376754, 4.863579],
-        [-1.874308, 4.032237],
-        [-0.089337, -3.026809],
-        [3.997787, 2.518662],
-        [-3.082978, 2.884822],
-        [0.845235, -3.454465],
-        [1.327224, 3.358778],
-        [-2.889949, 3.596178],
-        [-0.966018, -2.839827],
-        [2.960769, 3.079555],
-        [-3.275518, 1.577068],
-        [0.639276, -3.41284]
-      ]
-      var CLUSTER_COUNT = 6
-      var DIENSIION_CLUSTER_INDEX = 2
-      var COLOR_ALL = [
-        '#37A2DA',
-        '#e06343',
-        '#37a354',
-        '#b55dba',
-        '#b5bd48',
-        '#8378EA',
-        '#96BFFF'
-      ]
-      var pieces = []
-      for (var i = 0; i < CLUSTER_COUNT; i++) {
-        pieces.push({
-          value: i,
-          label: 'cluster ' + i,
-          color: COLOR_ALL[i]
-        })
-      }
-      const option = {
-        dataset: [
-          {
-            source: data
-          },
-          {
-            transform: {
-              type: 'ecStat:clustering',
-              // print: true,
-              config: {
-                clusterCount: CLUSTER_COUNT,
-                outputType: 'single',
-                outputClusterIndexDimension: DIENSIION_CLUSTER_INDEX
-              }
-            }
-          }
-        ],
-        tooltip: {
-          position: 'top'
-        },
-        visualMap: {
-          type: 'piecewise',
-          top: 'middle',
-          min: 0,
-          max: CLUSTER_COUNT,
-          left: 10,
-          splitNumber: CLUSTER_COUNT,
-          dimension: DIENSIION_CLUSTER_INDEX,
-          pieces: pieces
-        },
-        grid: {
-          left: 120
-        },
-        xAxis: {},
-        yAxis: {},
-        series: {
-          type: 'scatter',
-          encode: { tooltip: [0, 1] },
-          symbolSize: 15,
-          itemStyle: {
-            borderColor: '#555'
-          },
-          datasetIndex: 1
+      // 生成函数字符串
+      let functionString = 'return '
+      var data1 = []
+      // 生成函数体
+      for (let i = 0; i < n; i++) {
+        const coefficient = data[i]
+        functionString += `${coefficient} * Math.pow(x, ${i})`
+        if (i < n - 1) {
+          functionString += ' + '
         }
       }
-      myChart.setOption(option)
+      const generatedFunction = new Function('x', functionString)
+      for (let i = -5; i <= 5; i += 0.1) {
+        data1.push([i, generatedFunction(i)])
+      }
+      return data1
+    },
+
+    showChart() {
+      // this.showSelectedOptions()
+      var a = []
+      axios.get('http://localhost:8080/regression/get_data').then(res => {
+        for (var i = 0; i < res.data.length; i++) {
+          this.data2.push([res.data[i].x, res.data[i].y])
+        }
+      })
+      axios.get('http://localhost:8080/regression/all').then(res => {
+        for (var i = 0; i < res.data.length; i++) {
+          a.push(this.generateFunction(res.data[i]))
+        }
+        this.datus = a
+        const echarts = require('echarts')
+        const chart = echarts.init(document.getElementById('echart1'))
+        const option = {
+          animation: false,
+          grid: {
+            top: 0,
+            left: 50,
+            right: 40,
+            bottom: 50
+          },
+          xAxis: {
+            name: 'x',
+            minorTick: {
+              show: true
+            },
+            minorSplitLine: {
+              show: true
+            }
+          },
+          yAxis: {
+            name: 'y',
+            min: -100,
+            max: 100,
+            minorTick: {
+              show: true
+            },
+            minorSplitLine: {
+              show: true
+            }
+          },
+          legend: {
+            data: ['first-order', 'second-order', 'third-order', 'fourth-order', 'fifth-order', 'ransac']
+          },
+          dataZoom: [
+            {
+              show: true,
+              type: 'inside',
+              filterMode: 'none',
+              xAxisIndex: [0],
+              startValue: -20,
+              endValue: 20
+            },
+            {
+              show: true,
+              type: 'inside',
+              filterMode: 'none',
+              yAxisIndex: [0],
+              startValue: -20,
+              endValue: 20
+            }
+          ],
+          series: [
+            {
+              type: 'scatter',
+              showSymbol: false,
+              clip: true,
+              data: this.data2
+            },
+            {
+              type: 'line',
+              showSymbol: false,
+              clip: true,
+              name: 'first-order',
+              lineStyle: {
+                opacity: this.options[0].checked ? 1 : 0
+              },
+              data: this.datus[0]
+            },
+            {
+              type: 'line',
+              showSymbol: false,
+              clip: true,
+              name: 'second-order',
+              lineStyle: {
+                opacity: this.options[1].checked ? 1 : 0
+              },
+              data: this.datus[1]
+            },
+            {
+              type: 'line',
+              showSymbol: false,
+              clip: true,
+              name: 'third-order',
+              lineStyle: {
+                opacity: this.options[2].checked ? 1 : 0
+              },
+              data: this.datus[2]
+            },
+            {
+              type: 'line',
+              showSymbol: false,
+              clip: true,
+              name: 'fourth-order',
+              lineStyle: {
+                opacity: this.options[3].checked ? 1 : 0
+              },
+              data: this.datus[3]
+            },
+            {
+              type: 'line',
+              showSymbol: false,
+              clip: true,
+              name: 'fifth-order',
+              lineStyle: {
+                opacity: this.options[4].checked ? 1 : 0
+              },
+              data: this.datus[4]
+            },
+            {
+              type: 'line',
+              showSymbol: false,
+              clip: true,
+              name: 'ransac',
+              lineStyle: {
+                opacity: this.options[5].checked ? 1 : 0
+              },
+              data: this.datus[5]
+            }
+          ]
+        }
+        chart.setOption(option)
+      })
     }
   }
 }
@@ -264,17 +297,15 @@ export default {
 </script>
 
 <style scoped>
-.demo-input-suffix {
+.custom-checkbox {
+  transform: scale(1.5); /* 调整复选框的大小 */
+  margin-right: 10px; /* 调整复选框与文本之间的间距 */
   display: flex;
-  gap: 10px;
   align-items: center;
-  margin-left: 0;
-  margin-top: 10px;
-
 }
 
 #echart1 {
-  margin-top: 100px;
+  margin-top: 0px;
   left: 0;
   height: 100vh;
 }

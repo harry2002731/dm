@@ -80,7 +80,7 @@
       <div>
         <el-col :span="12">
           <el-slider
-            v-model="value2"
+            v-model="input_k"
             :step="1"
             max="30"
             height="200px"
@@ -140,7 +140,7 @@ export default {
       input_minPts: '',
       pageNum: 1,
       pageSize: 8,
-      value: '',
+      value: 'kmeans',
       options: [{
         value: '选项1',
         label: 'kmeans'
@@ -160,9 +160,9 @@ export default {
   },
 
   mounted() {
-    this.renderChart('1', [])
-    this.renderChart('2', [])
-    this.renderChart('3', [])
+    this.renderChart('1', 'Dataset(Iris)')
+    this.renderChart('2', 'Dataset(Two clusters)')
+    this.renderChart('3', 'Dataset(Three clusters)')
   },
   methods: {
     loadTable(num) {
@@ -172,9 +172,9 @@ export default {
       })
     },
     test() {
-      this.renderChart('1', [])
-      this.renderChart('2', [])
-      this.renderChart('3', [])
+      this.renderChart('1', 'Dataset(Iris)')
+      this.renderChart('2', 'Dataset(Two clusters)')
+      this.renderChart('3', 'Dataset(Three clusters)')
     },
     checkRowData(row) {
       return row.name !== '' && row.age !== null
@@ -194,12 +194,12 @@ export default {
     addRow() {
       this.tableData.push({ name: '', age: null })
     },
-    renderChart(containerId, data) {
+    renderChart(containerId, chart_name) {
       var url
       if (this.value === '选项1') {
-        url = 'http://localhost:8080/api/kmeans?K_num=' + this.input_k + '&dataset=' + containerId
+        url = 'http://localhost:8080/clustering/kmeans?K_num=' + this.input_k + '&dataset=' + containerId
       } else {
-        url = 'http://localhost:8080/api/dbscan?dataset=' + containerId + '&epsilon=' + this.input_epsilon + '&minPts=' + this.input_minPts
+        url = 'http://localhost:8080/clustering/dbscan?dataset=' + containerId + '&epsilon=' + this.input_epsilon + '&minPts=' + this.input_minPts
       }
       axios.get(url).then(res => {
         this.pieces_raw_data = res.data
@@ -223,15 +223,13 @@ export default {
         }
         const option = {
           xAxis: {
-            type: 'value',
-            min: -4, // 设置 x 轴的最小值
-            max: 4 // 设置 x 轴的最大值},
+
           },
           yAxis: {},
           title: [
             {
               left: 'center',
-              text: 'Gradient along the y axis'
+              text: chart_name
             }
           ],
           series: data.map(item => ({
@@ -247,10 +245,9 @@ export default {
       })
     },
     showChart() {
-      this.renderChart('1', [])
-      this.renderChart('2', [])
-      this.renderChart('3', [])
-      this.renderChart('4', [])
+      this.renderChart('1', 'Dataset(Iris)')
+      this.renderChart('2', 'Dataset(Two clusters)')
+      this.renderChart('3', 'Dataset(Three clusters)')
     }
   }
 }
