@@ -1,6 +1,30 @@
 <template>
   <div class="app-container">
     <template>
+      <div class="demo-input-suffix">
+        <el-row>
+          <el-select v-model="value" clearable placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-button type="primary" @click="showChart()">数据 聚类</el-button>
+        </el-row>
+        <el-row>
+          <el-input
+            v-model="input1"
+            size="medium"
+            placeholder="请输入k"
+            clearable
+            class="outer-container"
+          />
+        </el-row>
+      </div>
+    </template>
+    <template>
       <div>
         <el-row>
           <el-col :span="4">
@@ -53,20 +77,38 @@
           <el-button type="primary" @click="showChart()">散点图</el-button>
         </div>
       </div>
+      <div>
+        <!--        <el-col :span="1">-->
+        <!--        </el-col>-->
+        <el-col :span="20">
+          <el-row>
+            <el-col :span="8">
+              <div class="chart-container ">
+                <div id="chart1" class="chart" />
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="chart-container ">
+                <div id="chart2" class="chart" />
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <div class="chart-container ">
+                <div id="chart3" class="chart" />
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="chart-container ">
+                <div id="chart4" class="chart" />
+              </div>
+            </el-col>
+          </el-row>
+        </el-col>
+
+      </div>
     </template>
-    <v-chart class="echart1" :option="option" autoresize />
-    <el-main>
-      <el-row>
-        <div class="block">
-          <el-slider
-            v-model="input1"
-            show-input
-            @change="showChart()"
-          />
-        </div>
-        <div id="echart1" />
-      </el-row>
-    </el-main>
   </div>
 </template>
 
@@ -74,6 +116,7 @@
 
 // import ecStat from 'echarts-stat'
 import axios from 'axios'
+// import echarts from "echarts";
 // import echarts from "echarts";
 
 export default {
@@ -97,6 +140,22 @@ export default {
       input2: '',
       pageNum: 1,
       pageSize: 8,
+      options: [{
+        value: '选项1',
+        label: '黄金糕'
+      }, {
+        value: '选项2',
+        label: '双皮奶'
+      }, {
+        value: '选项3',
+        label: '蚵仔煎'
+      }, {
+        value: '选项4',
+        label: '龙须面'
+      }, {
+        value: '选项5',
+        label: '北京烤鸭'
+      }],
       columns: [
         { prop: 'id', label: 'id' },
         { prop: 'petW', label: 'petW' },
@@ -106,6 +165,28 @@ export default {
         { prop: 'sepW', label: 'sepW' }
       ]
     }
+  },
+  mounted() {
+    this.renderChart('chart1', [
+      [1, 2],
+      [3, 4],
+      [5, 6]
+    ])
+    this.renderChart('chart2', [
+      [7, 8],
+      [9, 10],
+      [11, 12]
+    ])
+    this.renderChart('chart3', [
+      [13, 14],
+      [15, 16],
+      [17, 18]
+    ])
+    this.renderChart('chart4', [
+      [19, 20],
+      [21, 22],
+      [23, 24]
+    ])
   },
   methods: {
     loadTable(num) {
@@ -139,6 +220,46 @@ export default {
     addRow() {
       this.tableData.push({ name: '', age: null })
     },
+    renderChart(containerId, data) {
+      axios.get('http://localhost:8080/api/clu_test?K_num=' + this.input1).then(res => {
+        this.pieces_raw_data = res.data
+        const echarts = require('echarts')
+        const chart = echarts.init(document.getElementById(containerId))
+        // var colors = [
+        //   '#37A2DA',
+        //   '#e06343',
+        //   '#37a354',
+        //   '#b55dba',
+        //   '#b5bd48',
+        //   '#8378EA',
+        //   '#96BFFF'
+        // ]
+        var data = []
+        for (var i = 0; i < this.pieces_raw_data.length; i++) {
+          data.push({ value: [this.pieces_raw_data[i].x, this.pieces_raw_data[i].y], category: this.pieces_raw_data[i].clu_res })
+        }
+        const option = {
+          xAxis: {
+            type: 'value',
+            min: -4, // 设置 x 轴的最小值
+            max: 4 // 设置 x 轴的最大值},
+          },
+          yAxis: {},
+          title: [
+            {
+              left: 'center',
+              text: 'Gradient along the y axis'
+            }
+          ],
+          series: [{
+            type: 'scatter',
+            data: data,
+            symbolSize: 10 // 设置散点的大小
+          }]
+        }
+        chart.setOption(option)
+      })
+    },
     showChart() {
       axios.get('http://localhost:8080/api/clu_test?K_num=' + this.input1).then(res => {
         this.pieces_raw_data = res.data
@@ -159,7 +280,11 @@ export default {
           data.push({ value: [this.pieces_raw_data[i].x, this.pieces_raw_data[i].y], category: this.pieces_raw_data[i].clu_res })
         }
         const option = {
-          xAxis: {},
+          xAxis: {
+            type: 'value',
+            min: -4, // 设置 x 轴的最小值
+            max: 4 // 设置 x 轴的最大值},
+          },
           yAxis: {},
           series: data.map(item => ({
             type: 'scatter',
@@ -179,7 +304,6 @@ export default {
 
 <style scoped>
 .demo-input-suffix {
-  display: flex;
   gap: 10px;
   align-items: center;
   margin-left: 0;
@@ -191,5 +315,22 @@ export default {
   margin-top: 0px;
   left: 0;
   height: 100vh;
+}
+.chart-container {
+  height: 40vh;
+  width: 50vh;
+  margin: -1px; /* 为了消除列之间的间距 */
+//display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.outer-container {
+  margin-top: 5px;
+  width: 300px;
+
+}
+.chart {
+  width: 100%;
+  height: 100%;
 }
 </style>
