@@ -65,7 +65,7 @@ public class RegressionService {
         return coefficients;
     }
 
-    public double[] simpleRegression(Instances data)
+    private double[][] simpleRegressionData(Instances data)
     {
         int length = data.numInstances();
 
@@ -73,27 +73,37 @@ public class RegressionService {
         WeightedObservedPoints obs = new WeightedObservedPoints();
 
         double[][] dataArray = new double[length][2];
-
+        int i = 0;
         // 将Instances对象中的数据点添加到WeightedObservedPoints对象中
         for (Instance instance : data) {
 //            double x = instance.value(0);  // 假设输入数据只有一个属性，即x值
 //            double y = instance.value(1);  // 假设输出数据只有一个属性，即y值
 //            obs.add(x, y);
-            for (int i = 0; i < length; i++)
-            {
-                dataArray[i][0] = instance.value(0);
-                dataArray[i][1] = instance.value(1);
-            }
+            dataArray[i][0] = instance.value(0);
+            dataArray[i][1] = instance.value(1);
+            i = i + 1;
         }
 
+        return dataArray;
+
+
+    }
+
+    public double[] performSimpleRegression()
+    {
+        List<RegressionData> regressionData = regressionMapper.getAllregression();
+        Instances instances = convertToInstances(regressionData);
+        double[][] data = simpleRegressionData(instances);
         SimpleRegression regression = new SimpleRegression();
-        regression.addData(dataArray);
+        regression.addData(data);
         double[] linear_res = new double[2];
         linear_res[0] = regression.getSlope();
         linear_res[1] = regression.getIntercept();
         return linear_res;
 
     }
+
+
 
     public double[] performPolyRegression(int degree)
     {
@@ -194,8 +204,9 @@ public class RegressionService {
         }
     }
 
-    public void performRANSAC()
+    public double[] performRANSAC()
     {
+        double[] res = new double[2];
         List<RegressionData> regressionData = regressionMapper.getAllregression_noise();
         Instances instances = convertToInstances(regressionData);
 
@@ -205,6 +216,9 @@ public class RegressionService {
         System.out.println("拟合结果：");
         System.out.println("斜率：" + lineModel.getSlope());
         System.out.println("截距：" + lineModel.getIntercept());
+        res[0] = lineModel.getSlope();
+        res[1] = lineModel.getIntercept();
+        return res;
     }
 
 }

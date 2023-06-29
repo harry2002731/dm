@@ -110,6 +110,7 @@ class DmTestApplicationTests {
 	public void testRegression()
 	{
 		regressionService.performPolyRegression(1);
+		double[] res = regressionService.performSimpleRegression();
 	}
 
 	@Test

@@ -76,12 +76,12 @@ public class IrisDataController {
 //        return clusteringService.performDBSCAN(dataset,epsilon,minPts);
 //    }
 
-    @GetMapping("/api/reg_test")
-    public double[] getRegressionResult(@RequestParam(defaultValue = "2") int degree)
-    {
-        logger.info("Received request params: {}",degree);
-        return regressionService.performPolyRegression(degree);
-    }
+//    @GetMapping("/api/reg_test")
+//    public double[] getRegressionResult(@RequestParam(defaultValue = "2") int degree)
+//    {
+//        logger.info("Received request params: {}",degree);
+//        return regressionService.performPolyRegression(degree);
+//    }
 
 //    @GetMapping("/api/apri")
 //    public List<double[]> getApriData(@RequestParam(defaultValue = "0.4") double support, @RequestParam(defaultValue = "0.5") double confidence)
