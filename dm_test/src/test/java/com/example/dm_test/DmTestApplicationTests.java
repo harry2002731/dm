@@ -109,7 +109,7 @@ class DmTestApplicationTests {
 	@Test
 	public void testRegression()
 	{
-		regressionService.performRegression(2);
+		regressionService.performPolyRegression(1);
 	}
 
 	@Test
