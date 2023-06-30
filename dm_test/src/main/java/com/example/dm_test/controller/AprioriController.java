@@ -1,8 +1,10 @@
 package com.example.dm_test.controller;
 
 import com.example.dm_test.entity.AprioriData;
+import com.example.dm_test.entity.Iris;
 import com.example.dm_test.service.AprioriService;
 import com.example.dm_test.service.NAprioriService;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,13 @@ public class AprioriController {
 
     @Autowired
     private AprioriService aprioriService;
+
+    @GetMapping("/page")
+    public PageInfo<AprioriData> getAllUsers(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
+    {
+        logger.info("Received request with pageNum: {}, pageSize: {}", pageNum, pageSize);
+        return aprioriService.findAllApriori(pageNum, pageSize);
+    }
 
     @GetMapping("/get_heatmap")
     public List<double[]> getApriData(@RequestParam(defaultValue = "0.4") double support, @RequestParam(defaultValue = "0.5") double confidence)

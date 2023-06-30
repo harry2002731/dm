@@ -1,7 +1,10 @@
 package com.example.dm_test.service;
 
 import com.example.dm_test.entity.AprioriData;
+import com.example.dm_test.entity.Iris;
 import com.example.dm_test.mapper.AprioriMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import weka.associations.Apriori;
@@ -19,6 +22,15 @@ import java.util.*;
 public class AprioriService {
     @Autowired
     private AprioriMapper aprioriMapper;
+
+    public PageInfo<AprioriData> findAllApriori(int pageNum, int pageSize)
+    {
+        System.out.println(pageNum);
+        System.out.println(pageSize);
+        PageHelper.startPage(pageNum, pageSize);
+        List<AprioriData> aprioriDataList = aprioriMapper.getAllApriori();
+        return new PageInfo<AprioriData>(aprioriDataList);
+    }
 
     private Instances convertToInstances(List<AprioriData> aprioriDataList)
     {
