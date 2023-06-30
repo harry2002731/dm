@@ -6,6 +6,8 @@ import com.example.dm_test.mapper.IrisMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -271,6 +273,7 @@ public class NAprioriService {
         System.out.println(supp);
         List<String> transactions = new ArrayList<>();
         List<double[]> out_data = new ArrayList<>();
+
 //        List<AprioriData> aprioriDataList = getAllApData();
 
 //        for (AprioriData aprioriData : aprioriDataList)
@@ -360,7 +363,10 @@ public class NAprioriService {
                     array[1] = 4;
                     break;
             }
-            array[2] = relationRulesMap.get(s);
+            double confi = relationRulesMap.get(s);
+            BigDecimal two = new BigDecimal(confi);
+            double flitered = two.setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue();
+            array[2] = flitered;
             out_data.add(array);
         }
         return out_data;
