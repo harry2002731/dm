@@ -2,6 +2,8 @@ package com.example.dm_test.service;
 
 import com.example.dm_test.entity.RegressionData;
 import com.example.dm_test.mapper.RegressionMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -224,6 +226,14 @@ public class RegressionService {
         res[1] = lineModel.getSlope();
         res[0] = lineModel.getIntercept();
         return res;
+    }
+    public PageInfo<RegressionData> findPagedRegressionData(int pageNum, int pageSize)
+    {
+        System.out.println(pageNum);
+        System.out.println(pageSize);
+        PageHelper.startPage(pageNum,pageSize);
+        List<RegressionData> regressionDataList = regressionMapper.getAllregression_noise();
+        return new PageInfo<RegressionData>(regressionDataList);
     }
 
 }

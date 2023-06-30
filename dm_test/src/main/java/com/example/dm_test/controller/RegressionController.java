@@ -1,8 +1,10 @@
 package com.example.dm_test.controller;
 
 
+import com.example.dm_test.entity.Iris;
 import com.example.dm_test.entity.RegressionData;
 import com.example.dm_test.service.RegressionService;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,5 +92,12 @@ public class RegressionController {
         }
         res.add(regressionService.performRANSAC());
         return res;
+    }
+
+    @GetMapping("/page")
+    public PageInfo<RegressionData> getAllPageData(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
+    {
+        logger.info("Received request with pageNum: {}, pageSize: {}", pageNum, pageSize);
+        return regressionService.findPagedRegressionData(pageNum, pageSize);
     }
 }
