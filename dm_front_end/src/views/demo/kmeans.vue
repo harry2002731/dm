@@ -78,15 +78,15 @@
         />
       </div>
       <div>
-        <el-col :span="12">
-          <el-slider
-            v-model="input_k"
-            :step="1"
-            max="30"
-            height="200px"
-            show-stops
-          />
-        </el-col>
+        <!--        <el-col :span="12">-->
+        <!--          <el-slider-->
+        <!--            v-model="input_k"-->
+        <!--            :step="1"-->
+        <!--            max="30"-->
+        <!--            height="200px"-->
+        <!--            show-stops-->
+        <!--          />-->
+        <!--        </el-col>-->
         <el-col :span="24">
           <el-row>
             <el-col :span="8">
@@ -140,7 +140,7 @@ export default {
       input_minPts: '',
       pageNum: 1,
       pageSize: 8,
-      value: 'kmeans',
+      value: '',
       options: [{
         value: '选项1',
         label: 'kmeans'
