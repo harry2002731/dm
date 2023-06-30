@@ -20,4 +20,8 @@ public class RegressionData {
     public double getX() {
         return x;
     }
+
+    public Long getId() {
+        return id;
+    }
 }
