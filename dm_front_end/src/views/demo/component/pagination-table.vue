@@ -8,15 +8,15 @@
             <el-button v-if="!isEditing" type="primary" style="margin-bottom: 10px" @click="startEditing">编辑</el-button>
             <el-button v-else type="success" style="margin-bottom: 10px" @click="finishEditing">完成编辑</el-button>
           </el-col>
-          <el-col :span="1">
-            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>
-          </el-col>
+          <!--          <el-col :span="1">-->
+          <!--            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>-->
+          <!--          </el-col>-->
         </el-row>
         <el-table :data="tableData" style="width: 100%" stripe border>
           <el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label">
             <template slot-scope="scope">
               <template v-if="isEditing">
-                <el-input v-model.number="scope.row[column.prop]" size="small" />
+                <el-input v-model="scope.row[column.prop]" size="small" />
               </template>
               <template v-else>
                 {{ scope.row[column.prop] }}
@@ -86,6 +86,7 @@ export default {
     },
     finishEditing() {
       this.isEditing = false
+      axios.post('http://localhost:8080/api/update', this.tableData)
     },
     deleteRow(index) {
       this.tableData.splice(index, 1)
