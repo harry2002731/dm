@@ -8,9 +8,9 @@
             <el-button v-if="!isEditing" type="primary" style="margin-bottom: 10px" @click="startEditing">编辑</el-button>
             <el-button v-else type="success" style="margin-bottom: 10px" @click="finishEditing">完成编辑</el-button>
           </el-col>
-          <el-col :span="1">
-            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>
-          </el-col>
+          <!--          <el-col :span="1">-->
+          <!--            <el-button v-if="isEditing" type="primary" style="margin-bottom: 10px" @click="addRow">新增一行</el-button>-->
+          <!--          </el-col>-->
         </el-row>
         <el-table :data="tableData" style="width: 100%" stripe border :row-class-name="getRowClassName">
           <el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label">

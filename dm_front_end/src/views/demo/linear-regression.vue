@@ -29,7 +29,7 @@
 
 // import ecStat from 'echarts-stat'
 import axios from 'axios'
-import PaginationTable from '@/views/components-demo/pagination-table.vue'
+import PaginationTable from './component/table.vue'
 // import echarts from "echarts";
 // import echarts from "echarts";
 // import echarts from 'echarts'
@@ -60,11 +60,8 @@ export default {
       checkList: ['选中且禁用', '复选框 A'],
       columns: [
         { prop: 'id', label: 'id' },
-        { prop: 'petW', label: 'petW' },
-        { prop: 'sepL', label: 'sepL' },
-        { prop: 'species', label: 'species' },
-        { prop: 'petL', label: 'petL' },
-        { prop: 'sepW', label: 'sepW' }
+        { prop: 'x', label: 'x' },
+        { prop: 'y', label: 'y' }
       ],
       options: [
         { label: 'first-order', value: 1, checked: false, url: '/linear_test', param: [] },
@@ -104,20 +101,6 @@ export default {
     addRow() {
       this.tableData.push({ name: '', age: null })
     },
-    // showSelectedOptions() {
-    //   const selectedOptions = this.options
-    //     .filter(option => option.checked)
-    //     .map(option => option.url)
-    //   const selectedOptions2 = this.options
-    //     .filter(option => option.checked)
-    //     .map(option => option.value)
-    //   for (var i = 0; i < selectedOptions.length; i++) {
-    //     axios.get('http://localhost:8080/regression' + selectedOptions[i]).then(res => {
-    //       this.options[selectedOptions2[i]].param = this.generateFunction(res.data)
-    //       this.options[selectedOptions2[i]].param = this.generateFunction(res.data)
-    //     })
-    //   }
-    // },
     // 生成一元函数
     showSelectedOptions() {
       var a = []
@@ -302,11 +285,14 @@ export default {
   margin-right: 10px; /* 调整复选框与文本之间的间距 */
   display: flex;
   align-items: center;
+  margin-left: 25px; /* 调整组件之间的水平间距 */
 }
 
 #echart1 {
   margin-top: 0px;
+  margin-left: 150px;
   left: 0;
-  height: 100vh;
+  height: 80vh;
+  width: 100vh;
 }
 </style>

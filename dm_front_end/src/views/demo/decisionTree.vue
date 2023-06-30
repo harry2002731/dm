@@ -21,22 +21,14 @@
             />
           </h1>
           <el-button type="primary" @click="showChart()">决策树结果</el-button>
-        </div>
-        <div v-if="show_chart" class="demo-image__placeholder">
-          <div class="block">
-            <span class="demonstration">默认</span>
-            <el-image :src="src" />
-          </div>
-          <div class="block">
-            <span class="demonstration">自定义</span>
-            <el-image :src="src">
-              <div slot="placeholder" class="image-slot">
-                加载中<span class="dot">...</span>
-              </div>
-            </el-image>
+          <div v-if="show_chart" class="demo-image__placeholder">
+            <div class="block">
+              <el-image :src="src" />
+            </div>
           </div>
         </div>
-        <div class="demo-input-suffix">
+
+        <div class="demo-input-suffix2">
           <h1 class="support">
             <el-input
               v-model="input3"
@@ -93,7 +85,7 @@
 <script>
 
 // import ecStat from 'echarts-stat'
-import PaginationTable from '@/views/components-demo/pagination-table.vue'
+import PaginationTable from './component/pagination-table.vue'
 
 import axios from 'axios'
 // import echarts from 'echarts'
@@ -114,8 +106,8 @@ export default {
       showErrorDialog: false,
       isFocused: false,
       isEditing: false,
-      input1: '1',
-      input2: '1',
+      input1: '',
+      input2: '',
       src: 'http://localhost:8080/images/tree?height=' + this.input1 + '&leaves=' + this.input2,
       input3: '',
       input4: '',
@@ -205,10 +197,10 @@ export default {
 
     post() {
       axios.post('http://localhost:8080/classification/new_data_vali', {
-        SepL: parseFloat(this.input3),
-        SepW: parseFloat(this.input4),
-        PetL: parseFloat(this.input5),
-        PetW: parseFloat(this.input6)
+        sepL: parseFloat(this.input3),
+        sepW: parseFloat(this.input4),
+        petL: parseFloat(this.input5),
+        petW: parseFloat(this.input6)
       },
       {
         headers: {
@@ -252,14 +244,31 @@ export default {
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-left: 0;
+  margin-left: 100px;
   margin-top: 10px;
 
 }
+.demo-input-suffix2 {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-left: 0px;
+  margin-top: 10px;
 
+}
 #echart1 {
   margin-top: 0px;
   left: 0;
   height: 60vh;
+}
+.center{
+  margin-left: 100px;
+  margin-top: 0px;
+
+}
+.block {
+  margin-left: 100px;
+  margin-top: 0px;
+
 }
 </style>

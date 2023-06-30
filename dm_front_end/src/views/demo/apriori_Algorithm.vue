@@ -37,7 +37,7 @@
 <script>
 
 import axios from 'axios'
-import PaginationTable from './component/pagination-table.vue'
+import PaginationTable from './component/table2.vue'
 
 export default {
   name: 'PagePermission',
@@ -58,11 +58,11 @@ export default {
       pageSize: 8,
       columns: [
         { prop: 'id', label: 'id' },
-        { prop: 'petW', label: 'petW' },
-        { prop: 'sepL', label: 'sepL' },
-        { prop: 'species', label: 'species' },
-        { prop: 'petL', label: 'petL' },
-        { prop: 'sepW', label: 'sepW' }
+        { prop: 'milk', label: 'milk' },
+        { prop: 'bread', label: 'bread' },
+        { prop: 'eggs', label: 'eggs' },
+        { prop: 'coke', label: 'coke' },
+        { prop: 'cereal', label: 'cereal' }
       ]
     }
   },
@@ -102,16 +102,12 @@ export default {
         })
     },
     showChart() {
-      axios.get('http://localhost:8080/api/apri?support=' + this.input1 + '&confidence=' + this.input2).then(res => {
+      axios.get('http://localhost:8080/apriori/get_heatmap?support=' + this.input1 + '&confidence=' + this.input2).then(res => {
         const echarts = require('echarts')
         const myChart = echarts.init(document.getElementById('echart1'), 'walden')
         // prettier-ignore
-        const hours = [
-          'milk', 'bread', 'eggs', 'coke', 'cereal'
-        ]
-        const days = [
-          'milk', 'bread', 'eggs', 'coke', 'cereal'
-        ]
+        const hours = ['milk', 'bread', 'eggs', 'coke', 'cereal']
+        const days = ['milk', 'bread', 'eggs', 'coke', 'cereal']
         const data = res.data
           .map(function(item) {
             return [item[1], item[0], item[2] || '-']
@@ -141,7 +137,7 @@ export default {
           },
           visualMap: {
             min: 0,
-            max: 10,
+            max: 2,
             calculable: true,
             orient: 'horizontal',
             left: 'center',
@@ -186,5 +182,6 @@ export default {
   margin-top: 10px;
   left: 0;
   height: 100vh;
+  margin-left: 100px;
 }
 </style>
