@@ -256,7 +256,7 @@ export default {
 
 <style scoped>
 .demo-input-suffix {
-  //border: 1px solid #ccc;
+  border: 1px solid #ccc;
   gap: 10px;
   align-items: center;
   margin-right: 0;
